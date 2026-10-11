@@ -67,5 +67,8 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "Ai_brain_test.slnx"
+    "dotnet.defaultSolution": "Ai_brain_test.slnx",
+    "dotrush.roslyn.projectOrSolutionFiles": [
+        "c:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Ai_brain_test.slnx"
+    ]
 }
