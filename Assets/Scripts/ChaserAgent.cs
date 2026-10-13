@@ -3,7 +3,7 @@ using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 
-public class ChaserAgent : MonoBehaviour
+public class ChaserAgent : Agent
 {
     [SerializeField] private Transform target;
     [SerializeField] private float moveSpeed = 10f;
@@ -33,7 +33,7 @@ public class ChaserAgent : MonoBehaviour
     }
     
     //eyes inputs we send to pytorch
-    public override void CollectObservation(VectorSensor sensor)
+    public override void CollectObservations(VectorSensor sensor)
     {
         sensor.AddObservation(target.localPosition);
         sensor.AddObservation(transform.localPosition);
@@ -41,6 +41,28 @@ public class ChaserAgent : MonoBehaviour
         sensor.AddObservation(rb.linearVelocity.z);
 
 
+    }
+    //brain and muscles: receive numbers from pytorch and move 
+    public override void OnActionReceived(ActionBuffers actions)
+    {
+        float moveX = actions.ContinuousActions[0];
+        float moveZ = actions.ContinuousActions[1];
+
+        rb.AddForce(new Vector3(moveX, 0f, moveZ) * moveSpeed);
+
+        //condition a did we touch the target
+        float distanceToTarget = Vector3.Distance(transform.localPosition, target.localPosition);
+        if(distanceToTarget < 1.4f)
+        {
+            SetReward(1.0f);
+            EndEpisode();
+        }
+
+
+        if(transform.localPosition.y < 0)
+        {
+            EndEpisode();
+        }
     }
 
  }
