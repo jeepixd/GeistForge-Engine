@@ -25,7 +25,22 @@ public class ChaserAgent : MonoBehaviour
 
         }
 
+        //teleport target sphere to random position on floor 
+        target.localPosition = new Vector3(Random.Range(-4f, 4f), 0f, Random.Range(-4f, 4f));
 
 
-    }    
+
+    }
+    
+    //eyes inputs we send to pytorch
+    public override void CollectObservation(VectorSensor sensor)
+    {
+        sensor.AddObservation(target.localPosition);
+        sensor.AddObservation(transform.localPosition);
+        sensor.AddObservation(rb.linearVelocity.x);
+        sensor.AddObservation(rb.linearVelocity.z);
+
+
+    }
+
  }
