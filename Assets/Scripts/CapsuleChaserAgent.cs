@@ -47,14 +47,29 @@ public class CapsuleChaserAgent : Agent
     //eyes inputs we send to pytorch
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(target.localPosition);
+
+        //ego centric 
+        //where is the target relative to my body and nose
+        Vector3 toTarget = transform.InverseTransformPoint(target.position);
+        sensor.AddObservation(toTarget.x);
+        sensor.AddObservation(toTarget.y);
+        sensor.AddObservation(toTarget.z);
+
+        //where is my velocity relative to my body?
+        Vector3 localVelocity = transform.InverseTransformDirection(rb.linearVelocity);
+        sensor.AddObservation(localVelocity.x);
+        sensor.AddObservation(localVelocity.z);
+
+
+        /*sensor.AddObservation(target.localPosition);
         sensor.AddObservation(transform.localPosition);
         sensor.AddObservation(rb.linearVelocity.x);
         sensor.AddObservation(rb.linearVelocity.z);
         var targetVel = (target.localPosition - previousTargetPos) / Time.fixedDeltaTime;
         sensor.AddObservation(targetVel.x);
         sensor.AddObservation(targetVel.z);
-
+        
+        */
         //update for next step
         previousTargetPos = target.localPosition;
 
