@@ -1,0 +1,29 @@
+{
+    "Chaser": {
+        "checkpoints": [
+            {
+                "steps": 50011,
+                "file_path": "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\ChaserRun3\\Chaser\\Chaser-50011.onnx",
+                "reward": 0.9414500062664349,
+                "creation_time": 1791887978.1352115,
+                "auxillary_file_paths": [
+                    "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\ChaserRun3\\Chaser\\Chaser-50011.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 50011,
+            "file_path": "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\ChaserRun3\\Chaser.onnx",
+            "reward": 0.9414500062664349,
+            "creation_time": 1791887978.1352115,
+            "auxillary_file_paths": [
+                "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\ChaserRun3\\Chaser\\Chaser-50011.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.5.1+cu121"
+    }
+}
