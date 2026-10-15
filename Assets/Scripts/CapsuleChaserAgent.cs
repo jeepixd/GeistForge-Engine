@@ -6,6 +6,13 @@ using Unity.InferenceEngine.Tokenization.Normalizers;
 
 public class CapsuleChaserAgent : Agent
 {
+    [Header("Combat Director")]
+    [Range(0f, 1f)]
+    [SerializeField] private float aggression = 1f;
+    [SerializeField] private bool randomizeInTraining = true;
+
+    private int episodeStepCount = 0;
+
     [SerializeField] private Transform target;
     [SerializeField] private float moveForce = 20f;
     [SerializeField] private float turnSpeed = 200f;
@@ -23,7 +30,13 @@ public class CapsuleChaserAgent : Agent
     //called everytime agent wins or falls off the platform
     public override void OnEpisodeBegin()
     {
+        episodeStepCount = 0;
 
+        if (randomizeInTraining)
+        {
+            aggression = Random.value > 0.5f ? 1.0f : 0.0f;
+
+        }
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         transform.localPosition = new Vector3(0f, 1f, -5f);
@@ -60,6 +73,10 @@ public class CapsuleChaserAgent : Agent
         sensor.AddObservation(localVelocity.x);
         sensor.AddObservation(localVelocity.z);
 
+        //0f =space 1f = strike
+        sensor.AddObservation(aggression);
+
+
 
         /*sensor.AddObservation(target.localPosition);
         sensor.AddObservation(transform.localPosition);
@@ -79,6 +96,7 @@ public class CapsuleChaserAgent : Agent
     //brain and muscles: receive numbers from pytorch and move 
     public override void OnActionReceived(ActionBuffers actions)
     {
+        episodeStepCount++;
         float forwardInput = actions.ContinuousActions[0];
         float turnInput = actions.ContinuousActions[1];
 
@@ -90,18 +108,46 @@ public class CapsuleChaserAgent : Agent
         rb.AddForce(transform.forward * forwardInput * moveForce);
 
         AddReward(-0.001f);
+        if (randomizeInTraining && episodeStepCount >= 200)
+        {
+            aggression = 1f;
+        }
 
         float distanceToTarget = Vector3.Distance(transform.position, target.position);
-        if(distanceToTarget < 1.4f)
+       
+        if(aggression> 0.5f)
         {
-            AddReward(1.0f);
-            EndEpisode();
+            
+            //attack mode
+            if(distanceToTarget < 1.4f)
+            {
+                AddReward(1f);
+                EndEpisode();
+            }
+
+
+
+
         }
-        if(transform.localPosition.y < -0.5f)
+        else
+        {
+            float spacingError = Mathf.Abs(distanceToTarget - 2.5f);
+            AddReward(0.002f * (1f - Mathf.Clamp01(spacingError)));
+            if (distanceToTarget < 1.5f)
+            {
+                AddReward(-0.005f);
+                
+            }
+        }
+
+        if (transform.localPosition.y < -0.5f)
         {
             SetReward(-1.0f);
             EndEpisode();
         }
+
+        
+
     }
     private void OnCollisionEnter(Collision collision)
     {
