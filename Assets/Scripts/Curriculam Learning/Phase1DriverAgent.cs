@@ -37,7 +37,22 @@ public class Phase1DriverAgent : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         //ego centric
+        Vector3 toTarget = transform.InverseTransformPoint(target.position);
+        sensor.AddObservation(toTarget.x);
+        sensor.AddObservation(toTarget.y);
+        sensor.AddObservation(toTarget.z);
+
+        //where is my velocity relative to my body
+        Vector3 localVelocity = transform.InverseTransformDirection(rb.linearVelocity);
+
+        sensor.AddObservation(localVelocity.x);
+        sensor.AddObservation(localVelocity.z);
+
+        sensor.AddObservation(Aggression);
+
+
 
     }
+
     
 }
