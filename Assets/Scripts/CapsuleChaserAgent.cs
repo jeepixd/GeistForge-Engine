@@ -97,59 +97,66 @@ public class CapsuleChaserAgent : Agent
     public override void OnActionReceived(ActionBuffers actions)
     {
         episodeStepCount++;
+        float forwardInput = actions.ContinuousActions[0];
+        float turnInput = actions.ContinuousActions[1];
 
-        // 1. FIX: Only allow moving FORWARD (0 to 1). No driving backwards blindly!
-        float forwardInput = Mathf.Clamp01(actions.ContinuousActions[0]);
-        float turnInput = Mathf.Clamp(actions.ContinuousActions[1], -1f, 1f);
-
-        // Rotate yaw
+        //rotate the capsule around y (yaws)
         float turn = turnInput * turnSpeed * Time.fixedDeltaTime;
         transform.Rotate(0f, turn, 0f);
 
-        // Push forward
-        rb.AddForce(transform.forward * forwardInput * moveForce);
+        //push the capsule into the faced directions
+        //force the agent to only drive in the direction its eyes are looking :
+        float forwardThrust = Mathf.Clamp01(forwardInput);
+        rb.AddForce(transform.forward * forwardThrust * moveForce);
 
-        // Tiny step penalty so it doesn't idle
-        AddReward(-0.0005f);
+        AddReward(-0.001f);
+        if (randomizeInTraining && episodeStepCount >= 200)
+        {
+            aggression = 1f;
+        }
 
         float distanceToTarget = Vector3.Distance(transform.position, target.position);
-
-        // --- MODE A: AGGRESSIVE (Catch the target) ---
-        if (aggression > 0.5f)
+       
+        if(aggression> 0.5f)
         {
-            if (distanceToTarget < 1.4f)
+            
+            //attack mode
+            if(distanceToTarget < 1.4f)
             {
-                SetReward(1.0f); // WIN!
+                AddReward(1f);
                 EndEpisode();
             }
+
+
+
+
         }
-        // --- MODE B: DEFENSIVE (Keep distance between 2.0m and 3.5m) ---
         else
         {
-            // Give reward for keeping good combat distance
-            if (distanceToTarget >= 2.0f && distanceToTarget <= 3.5f)
+            float spacingError = Mathf.Abs(distanceToTarget - 2.5f);
+            AddReward(0.002f * (1f - Mathf.Clamp01(spacingError)));
+            if (distanceToTarget < 1.5f)
             {
-                AddReward(0.01f); // Good spacing!
+                AddReward(-0.005f);
+                
             }
-            else if (distanceToTarget < 1.8f)
+            // WIN CONDITION FOR SPACING:
+            // If it successfully maintained spacing for 150 steps, it WINS!
+            if (episodeStepCount >= 150)
             {
-                AddReward(-0.01f); // Too close! Danger!
-            }
-
-            // WIN CONDITION FOR DEFENSIVE: Survived and spaced well for 300 steps!
-            if (episodeStepCount >= 300)
-            {
-                SetReward(1.0f); // WIN! You successfully survived and kept distance!
+                AddReward(1.0f); // Successfully spaced and survived -> WIN!
                 EndEpisode();
             }
         }
 
-        // --- CLIFF CHECK ---
         if (transform.localPosition.y < -0.5f)
         {
-            SetReward(-1.0f);
+            AddReward(-1.0f);
             EndEpisode();
         }
+
+        
+
     }
     private void OnCollisionEnter(Collision collision)
     {
