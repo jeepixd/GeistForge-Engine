@@ -3467,10 +3467,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6922248443120554226, guid: b9c1aa3b178e25b40bea1db905e229d0, type: 3}
+      propertyPath: MaxStep
+      value: 500
+      objectReference: {fileID: 0}
     - target: {fileID: 8059788875709141032, guid: b9c1aa3b178e25b40bea1db905e229d0, type: 3}
       propertyPath: m_Model
       value: 
-      objectReference: {fileID: 5022602860645237092, guid: e61395fe7e587c54e8d50a1ca5b284b8, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 8059788875709141032, guid: b9c1aa3b178e25b40bea1db905e229d0, type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
       value: 6

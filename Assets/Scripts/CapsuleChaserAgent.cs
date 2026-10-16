@@ -32,11 +32,8 @@ public class CapsuleChaserAgent : Agent
     {
         episodeStepCount = 0;
 
-        if (randomizeInTraining)
-        {
-            aggression = Random.value > 0.5f ? 1.0f : 0.0f;
+        aggression = 0.0f;
 
-        }
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         transform.localPosition = new Vector3(0f, 1f, -5f);
@@ -110,10 +107,12 @@ public class CapsuleChaserAgent : Agent
         rb.AddForce(transform.forward * forwardThrust * moveForce);
 
         AddReward(-0.001f);
-        if (randomizeInTraining && episodeStepCount >= 200)
+        // 3. The Phase Shift: At tick 120, sound the war horn!
+        if (episodeStepCount >= 120)
         {
-            aggression = 1f;
+            aggression = 1.0f; // Switch to Attack Mode!
         }
+       
 
         float distanceToTarget = Vector3.Distance(transform.position, target.position);
        
@@ -133,20 +132,19 @@ public class CapsuleChaserAgent : Agent
         }
         else
         {
-            float spacingError = Mathf.Abs(distanceToTarget - 2.5f);
-            AddReward(0.002f * (1f - Mathf.Clamp01(spacingError)));
-            if (distanceToTarget < 1.5f)
+            // === PHASE 1: STALK PHASE ===
+            // Points are ONLY paid if standing inside the active combat ring [1.8m - 3.2m]!
+            if (distanceToTarget >= 1.8f && distanceToTarget <= 3.2f)
             {
-                AddReward(-0.005f);
-                
+                float spacingError = Mathf.Abs(distanceToTarget - 2.5f);
+                AddReward(0.01f * (1.0f - spacingError)); // Continuous stalking bonus
             }
-            // WIN CONDITION FOR SPACING:
-            // If it successfully maintained spacing for 150 steps, it WINS!
-            if (episodeStepCount >= 150)
+            else if (distanceToTarget < 1.5f)
             {
-                AddReward(1.0f); // Successfully spaced and survived -> WIN!
-                EndEpisode();
+                // Penalty for violating personal space before the strike phase
+                AddReward(-0.01f);
             }
+            // If distance > 3.2m (running away), it earns ZERO points!
         }
 
         if (transform.localPosition.y < -0.5f)
