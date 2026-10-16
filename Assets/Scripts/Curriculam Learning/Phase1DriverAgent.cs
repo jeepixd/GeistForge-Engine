@@ -79,8 +79,16 @@ public class Phase1DriverAgent : Agent
 
 
     }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            AddReward(-0.3f);
+
+        }
+    }
 
 
 
-    
+
 }
