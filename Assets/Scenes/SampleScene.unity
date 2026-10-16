@@ -3483,11 +3483,40 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6922248443120554226, guid: b9c1aa3b178e25b40bea1db905e229d0, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5311059203511811402, guid: b9c1aa3b178e25b40bea1db905e229d0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3469291417332444900}
   m_SourcePrefab: {fileID: 100100000, guid: b9c1aa3b178e25b40bea1db905e229d0, type: 3}
+--- !u!1 &3469291417332444899 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5311059203511811402, guid: b9c1aa3b178e25b40bea1db905e229d0, type: 3}
+  m_PrefabInstance: {fileID: 3469291417332444898}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3469291417332444900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3469291417332444899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ab6bb38baa8fa94e9eeab59a7f48874, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Phase1DriverAgent
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 500
+  Aggression: 1
+  target: {fileID: 267860956}
+  moveForce: 20
+  turnSpeed: 200
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
