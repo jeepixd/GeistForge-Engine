@@ -53,6 +53,34 @@ public class Phase1DriverAgent : Agent
 
 
     }
+    public override void OnActionReceived(ActionBuffers actions)
+    {
+        float forwardInput = actions.ContinuousActions[0];
+        float turnInput = actions.ContinuousActions[1];
+
+        float turn = turnInput * turnSpeed * Time.fixedDeltaTime;
+        transform.Rotate(0f, turn, 0f);
+
+        float forwardThrust = Mathf.Clamp01(forwardInput);
+        rb.AddForce(transform.forward * forwardThrust * moveForce);
+        //so it doesnot stand still or go slow 
+        AddReward(-0.0005f);
+        float distanceToTarget = Vector3.Distance(transform.position, target.position);
+        if(distanceToTarget < 1.4f)
+        {
+            SetReward(1f);
+            EndEpisode();
+        }
+        if(transform.localPosition.y < -0.5f)
+        {
+            SetReward(-1f);
+            EndEpisode();
+        }
+
+
+    }
+
+
 
     
 }
