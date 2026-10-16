@@ -26,6 +26,18 @@ public class Phase1DriverAgent : Agent
         rb.angularVelocity = Vector3.zero;
         transform.localPosition = new Vector3(0f, 1f, -5f);
         transform.localRotation = Quaternion.identity;
+
+        float targetX = Random.Range(-4f, 4f);
+        float targetZ = Random.Range(2.5f, 5f);
+        target.localPosition = new Vector3(targetX, 0.5f, targetZ);
+
+
+    }
+
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        //ego centric
+
     }
     
 }
