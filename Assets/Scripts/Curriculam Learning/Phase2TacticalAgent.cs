@@ -30,5 +30,22 @@ public class Phase2TacticalAgent : Agent
         // 30% Strike (maintenance), 70% Stalk (heavy learning)
         aggression = (Random.value < 0.3f) ? 1.0f : 0.0f;
     }
+
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        Vector3 toTarget = transform.InverseTransformPoint(target.position);
+        sensor.AddObservation(toTarget.x);
+        sensor.AddObservation(toTarget.y);
+        sensor.AddObservation(toTarget.z);
+
+        //velocity relative to my body
+        Vector3 localVelocity = transform.InverseTransformDirection(rb.linearVelocity);
+        sensor.AddObservation(localVelocity.x);
+        sensor.AddObservation(localVelocity.y);
+
+        sensor.AddObservation(aggression);
+
+    }
+
     
 }
