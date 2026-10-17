@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
+using System.Runtime.CompilerServices;
 
 
 public class Phase1DriverAgent : Agent
@@ -21,11 +22,12 @@ public class Phase1DriverAgent : Agent
     }
     public override void OnEpisodeBegin()
     {
-
+        float xSpawnOffset = Random.Range(-2.5f, 2.5f);
+        float angleOffset = Random.Range(-35f, 35f);
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-        transform.localPosition = new Vector3(0f, 1f, -5f);
-        transform.localRotation = Quaternion.identity;
+        transform.localPosition = new Vector3(xSpawnOffset, 1f, -5f);
+        transform.localRotation = Quaternion.Euler(0f, angleOffset, 0f);
 
         float targetX = Random.Range(-4f, 4f);
         float targetZ = Random.Range(2.5f, 5f);
