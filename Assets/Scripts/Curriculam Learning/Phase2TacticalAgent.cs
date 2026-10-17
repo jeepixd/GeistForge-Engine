@@ -41,7 +41,7 @@ public class Phase2TacticalAgent : Agent
         //velocity relative to my body
         Vector3 localVelocity = transform.InverseTransformDirection(rb.linearVelocity);
         sensor.AddObservation(localVelocity.x);
-        sensor.AddObservation(localVelocity.y);
+        sensor.AddObservation(localVelocity.z);
 
         sensor.AddObservation(aggression);
 
@@ -59,7 +59,7 @@ public class Phase2TacticalAgent : Agent
         AddReward(-0.0005f);
         float distanceToTarget = Vector3.Distance(transform.position, target.position);
 
-        if (aggression == 1f)
+        if (aggression >= 0.5f)
         {
             if(distanceToTarget < 1.4f)
             {
@@ -67,7 +67,7 @@ public class Phase2TacticalAgent : Agent
                 EndEpisode();
             }
         }
-        if(aggression ==0f)
+        else
         {
             if(distanceToTarget >= 2f && distanceToTarget <= 3f)
             {
@@ -79,7 +79,7 @@ public class Phase2TacticalAgent : Agent
                 AddReward(-0.005f);
             }
         }
-        if(transform.localPosition.y < 0.5f)
+        if(transform.localPosition.y < -0.5f)
         {
             SetReward(-1f);
             EndEpisode();
