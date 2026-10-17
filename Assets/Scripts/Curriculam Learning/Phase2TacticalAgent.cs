@@ -85,7 +85,14 @@ public class Phase2TacticalAgent : Agent
             EndEpisode();
         }
     }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            AddReward(-0.3f);
+
+        }
+    }
 
 
-    
 }
