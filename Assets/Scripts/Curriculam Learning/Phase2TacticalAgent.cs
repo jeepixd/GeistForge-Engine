@@ -46,6 +46,46 @@ public class Phase2TacticalAgent : Agent
         sensor.AddObservation(aggression);
 
     }
+    public override void OnActionReceived(ActionBuffers actions)
+    {
+        float forwardInput = actions.ContinuousActions[0];
+        float turnInput = actions.ContinuousActions[1];
+
+        float turn = turnInput * turnSpeed * Time.fixedDeltaTime;
+        transform.Rotate(0f, turn, 0f);
+
+        float forwardThrust = Mathf.Clamp01(forwardInput);
+        rb.AddForce(transform.forward * forwardThrust * moveForce);
+        AddReward(-0.0005f);
+        float distanceToTarget = Vector3.Distance(transform.position, target.position);
+
+        if (aggression == 1f)
+        {
+            if(distanceToTarget < 1.4f)
+            {
+                SetReward(1f);
+                EndEpisode();
+            }
+        }
+        if(aggression ==0f)
+        {
+            if(distanceToTarget >= 2f && distanceToTarget <= 3f)
+            {
+                AddReward(0.005f);
+
+            }
+            if(distanceToTarget < 1.5f)
+            {
+                AddReward(-0.005f);
+            }
+        }
+        if(transform.localPosition.y < 0.5f)
+        {
+            SetReward(-1f);
+            EndEpisode();
+        }
+    }
+
 
     
 }
