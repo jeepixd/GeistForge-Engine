@@ -9,6 +9,7 @@ public class Phase2TacticalAgent : Agent
     [SerializeField] private Transform target;
     [SerializeField] private float moveForce = 20f;
     [SerializeField] private float turnSpeed = 200f;
+    private int episodeStepCount = 0;
 
     private Rigidbody rb;
 
@@ -19,6 +20,8 @@ public class Phase2TacticalAgent : Agent
     }
     public override void OnEpisodeBegin()
     {
+        episodeStepCount = 0;
+       
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
         transform.localPosition = new Vector3(0f, 1f, -5f);
@@ -48,9 +51,17 @@ public class Phase2TacticalAgent : Agent
     }
     public override void OnActionReceived(ActionBuffers actions)
     {
+        episodeStepCount++;
         float forwardInput = actions.ContinuousActions[0];
         float turnInput = actions.ContinuousActions[1];
 
+        Vector3 dirToTarget = (target.position - transform.position).normalized;
+        float facingDot = Vector3.Dot(transform.forward, dirToTarget);
+
+        if (aggression < 0.5f && episodeStepCount >= 150)
+        {
+            aggression = 1.0f;
+        }
         float turn = turnInput * turnSpeed * Time.fixedDeltaTime;
         transform.Rotate(0f, turn, 0f);
 
@@ -70,7 +81,7 @@ public class Phase2TacticalAgent : Agent
         }
         else
         {
-            if(distanceToTarget >= 2f && distanceToTarget <= 3f)
+            if(distanceToTarget >= 2f && distanceToTarget <= 3f && facingDot > 0.5f)
             {
                 AddReward(0.005f);
 
