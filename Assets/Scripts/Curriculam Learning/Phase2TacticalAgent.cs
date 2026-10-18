@@ -54,8 +54,9 @@ public class Phase2TacticalAgent : Agent
         float turn = turnInput * turnSpeed * Time.fixedDeltaTime;
         transform.Rotate(0f, turn, 0f);
 
-        float forwardThrust = Mathf.Clamp01(forwardInput);
-        rb.AddForce(transform.forward * forwardThrust * moveForce);
+        //float forwardThrust = Mathf.Clamp01(forwardInput);
+        float thrust = forwardInput >= 0f ? forwardInput : forwardInput * 05f;
+        rb.AddForce(transform.forward * thrust * moveForce);
         AddReward(-0.0005f);
         float distanceToTarget = Vector3.Distance(transform.position, target.position);
 

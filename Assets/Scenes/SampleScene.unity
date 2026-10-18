@@ -3474,7 +3474,11 @@ PrefabInstance:
     - target: {fileID: 8059788875709141032, guid: b9c1aa3b178e25b40bea1db905e229d0, type: 3}
       propertyPath: m_Model
       value: 
-      objectReference: {fileID: 5022602860645237092, guid: 5efbc641708f96e47babf2086af2fe2c, type: 3}
+      objectReference: {fileID: 5022602860645237092, guid: d9a28cfd2efcaf54ab6f11dad1d14aaa, type: 3}
+    - target: {fileID: 8059788875709141032, guid: b9c1aa3b178e25b40bea1db905e229d0, type: 3}
+      propertyPath: m_BehaviorType
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8059788875709141032, guid: b9c1aa3b178e25b40bea1db905e229d0, type: 3}
       propertyPath: m_BrainParameters.VectorObservationSize
       value: 6
@@ -3506,15 +3510,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 3469291417332444899}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4ab6bb38baa8fa94e9eeab59a7f48874, type: 3}
+  m_Script: {fileID: 11500000, guid: 193584a805f8c7a45a5646b8dd60abfa, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Phase1DriverAgent
+  m_EditorClassIdentifier: Assembly-CSharp::Phase2TacticalAgent
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 500
-  Aggression: 1
-  target: {fileID: 267860956}
+  aggression: 1
+  target: {fileID: 0}
   moveForce: 20
   turnSpeed: 200
 --- !u!1660057539 &9223372036854775807
