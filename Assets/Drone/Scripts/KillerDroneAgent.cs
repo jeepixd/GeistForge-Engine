@@ -48,18 +48,20 @@ public class KillerDroneAgent : Agent
         {
 
             randomDraw = Random.value;
+            if (randomDraw < 0.4f)
+            {
+                aggression = 0.0f;
+            }
+            else if (randomDraw < 0.7f)
+            {
+                aggression = 1.0f;
+            }
+            else
+            {
+                aggression = Random.Range(0f, 1f);
+            }
 
         }
-        if(randomDraw < 0.4f)
-        {
-            aggression = 0.0f;
-        }else if(randomDraw < 0.7f)
-        {
-            aggression = 1.0f;
-        }
-        else
-        {
-            aggression = Random.Range(0f, 1f);
-        }
+        
     }
 }
