@@ -1,9 +1,10 @@
-using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
-using UnityEngine.Rendering.Universal.Internal;
+using Unity.VectorGraphics;
 using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.Rendering.Universal.Internal;
 
 [RequireComponent(typeof(Rigidbody))]
 public class KillerDroneAgent : Agent
@@ -139,7 +140,79 @@ public class KillerDroneAgent : Agent
     }
     public void EvaluateCombatReward()
     {
+        if (target == null)
+            return;
 
+        //distance and direction 
+        Vector3 toTarget = target.position - transform.position;
+        float dist3D = toTarget.magnitude;
+        Vector3 dirToTarget = toTarget / Mathf.Max(dist3D, 0.001f);
+
+        //decompose into planar distance and elevation
+        float dXZ = new Vector2(toTarget.x, toTarget .y).magnitude;
+        float deltaY = transform.position.y - target.position.y;
+
+        //multiplicative facing gate 
+        float rawDot = Vector3.Dot(transform.forward, dirToTarget);
+        float facingGate = rawDot > 0f ? (rawDot * rawDot) : 0f;
+
+        Vector3 targetVel = target != null ? targetRb.linearVelocity : Vector3.zero;
+        float closingSpeed = Vector3.Dot(_rb.linearVelocity - targetVel, dirToTarget);
+        float retreatSpeed = - Vector3.Dot(_rb.linearVelocity, dirToTarget);
+
+
+        //stalk mode 
+        
+            float perchExponent = -((dXZ - 3.0f) * (dXZ - 3.0f)) / (2f * 1.44f)
+                          - ((deltaY - 2.0f) * (deltaY - 2.0f)) / (2f * 1.0f);
+            float rPerch = facingGate * Mathf.Exp(perchExponent);
+
+            float rApproach = dXZ > 5.0f ? (0.2f * facingGate * Mathf.Clamp(closingSpeed / maxSpeed, -1f, 1f)) : 0f;
+            float rBreach = 0f;
+            if (dXZ < 2.0f)
+            {
+                float intrusionRatio = (2.0f - dXZ) / 2.0f;
+                float penalty = -0.5f * (intrusionRatio * intrusionRatio); // Quadratic repulsion
+                float backpedalBonus = 0.6f * facingGate * Mathf.Clamp(retreatSpeed / maxSpeed, -1f, 1f);
+                rBreach = penalty + backpedalBonus;
+            }
+
+            //tactical circle strafe bonus 
+            float strafeSpeed = Mathf.Abs(Vector3.Dot(_rb.linearVelocity, transform.right));
+            float rStrafe = (dXZ >= 2.2f && dXZ <= 3.8f) ? (0.15f * facingGate * Mathf.Clamp01(strafeSpeed / maxSpeed)) : 0f;
+
+            float rStalk = rPerch + rApproach + rBreach + rStrafe;
+        
+       
+            //strike mode 
+            float rStrike = facingGate * (0.7f * Mathf.Clamp(closingSpeed / maxSpeed, -1f, 1f) + 0.3f * (1f - Mathf.Clamp01(dist3D / maxSensorRange)));
+            
+        
+        float stepReward = 0.01f * ((1f - aggression) * rStalk + aggression * rStrike);
+        AddReward(stepReward);
+
+        if(dist3D < 0.8f)
+        {
+            if(aggression >= 0.5f)
+            {
+                AddReward(2.0f * aggression * facingGate);
+            }
+            else
+            {
+                AddReward(-1.0f);
+            }
+            EndEpisode();
+        }
+
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            AddReward(-1.0f);
+            EndEpisode();
+        }
     }
     private void LateUpdate()
     {
