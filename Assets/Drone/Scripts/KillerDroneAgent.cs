@@ -28,6 +28,15 @@ public class KillerDroneAgent : Agent
     public float maxBankAngle = 22f;
     public float randomDraw;
 
+    [Header("Visual Telemetry (URP Emission glow")]
+    public MeshRenderer droneMeshRenderer;
+    [ColorUsage(true, true)] public Color stalkEyeColor = new Color(0f, 2.5f, 4f); //cyan
+    [ColorUsage(true, true)] public Color strikeEyeColor = new Color(5.0f, 0.2f, 0.1f); //crimsome color
+    private MaterialPropertyBlock _propBlock;
+    private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
+
+
+
     private Rigidbody _rb;
 
     public override void Initialize()
@@ -216,13 +225,21 @@ public class KillerDroneAgent : Agent
     }
     private void LateUpdate()
     {
+        // 1. Dynamic Eye Emission Color
+        if (droneMeshRenderer != null)
+        {
+            _propBlock ??= new MaterialPropertyBlock();
+            Color currentEyeGlow = Color.Lerp(stalkEyeColor, strikeEyeColor, aggression);
+            // Slot 2 is Mat_Eye_Emissive
+            droneMeshRenderer.GetPropertyBlock(_propBlock, 2);
+            _propBlock.SetColor(EmissionColorId, currentEyeGlow);
+            droneMeshRenderer.SetPropertyBlock(_propBlock, 2);
+        }
         if (visualModel == null || _rb == null) return;
-
-        // Tilt the visual 3D mesh based on drone movement speed (purely cosmetic!)
+        // 2. Cosmetic Predator Banking
         Vector3 localVel = transform.InverseTransformDirection(_rb.linearVelocity);
         float targetPitch = Mathf.Clamp(localVel.z / maxSpeed, -1f, 1f) * maxBankAngle;
         float targetRoll = -Mathf.Clamp(localVel.x / maxSpeed, -1f, 1f) * maxBankAngle;
-
         Quaternion targetRot = Quaternion.Euler(targetPitch, 0f, targetRoll);
         visualModel.localRotation = Quaternion.Slerp(visualModel.localRotation, targetRot, Time.deltaTime * 10f);
     }
