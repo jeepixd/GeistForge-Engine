@@ -149,14 +149,14 @@ public class KillerDroneAgent : Agent
         Vector3 dirToTarget = toTarget / Mathf.Max(dist3D, 0.001f);
 
         //decompose into planar distance and elevation
-        float dXZ = new Vector2(toTarget.x, toTarget .y).magnitude;
+        float dXZ = new Vector2(toTarget.x, toTarget.z).magnitude;
         float deltaY = transform.position.y - target.position.y;
 
         //multiplicative facing gate 
         float rawDot = Vector3.Dot(transform.forward, dirToTarget);
         float facingGate = rawDot > 0f ? (rawDot * rawDot) : 0f;
 
-        Vector3 targetVel = target != null ? targetRb.linearVelocity : Vector3.zero;
+        Vector3 targetVel = targetRb != null ? targetRb.linearVelocity : Vector3.zero;
         float closingSpeed = Vector3.Dot(_rb.linearVelocity - targetVel, dirToTarget);
         float retreatSpeed = - Vector3.Dot(_rb.linearVelocity, dirToTarget);
 
