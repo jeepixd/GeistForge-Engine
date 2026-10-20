@@ -2,6 +2,8 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
+using UnityEngine.Rendering.Universal.Internal;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(Rigidbody))]
 public class KillerDroneAgent : Agent
@@ -114,5 +116,41 @@ public class KillerDroneAgent : Agent
         sensor.AddObservation(Mathf.Clamp01(aggression));
 
         
+    }
+
+    public override void OnActionReceived(ActionBuffers actions)
+    {
+        var cont = actions.ContinuousActions;
+        float surge = Mathf.Clamp(cont[0], -1f, 1f);
+        float sway = Mathf.Clamp(cont[1], -1f, 1f);
+        float heave = Mathf.Clamp(cont[2], -1f, 1f);
+        float yawCmd = Mathf.Clamp(cont[3], -1f, 1f);
+        //the omnidirectional thruster logic
+        float mult = 1f;
+        if(surge < 0f)
+        {
+            mult = 0.85f;
+        }
+        Vector3 totalForce = (transform.forward * surge * surgeAccel * mult) + (transform.right * sway * swayAccel) + (transform.up * heave * heaveAccel);
+        _rb.AddForce(totalForce, ForceMode.Acceleration);
+        _rb.angularVelocity = new Vector3(0f, yawCmd * maxYawRateDeg * Mathf.Deg2Rad, 0f);
+        EvaluateCombatReward();
+        
+    }
+    public void EvaluateCombatReward()
+    {
+
+    }
+    private void LateUpdate()
+    {
+        if (visualModel == null || _rb == null) return;
+
+        // Tilt the visual 3D mesh based on drone movement speed (purely cosmetic!)
+        Vector3 localVel = transform.InverseTransformDirection(_rb.linearVelocity);
+        float targetPitch = Mathf.Clamp(localVel.z / maxSpeed, -1f, 1f) * maxBankAngle;
+        float targetRoll = -Mathf.Clamp(localVel.x / maxSpeed, -1f, 1f) * maxBankAngle;
+
+        Quaternion targetRot = Quaternion.Euler(targetPitch, 0f, targetRoll);
+        visualModel.localRotation = Quaternion.Slerp(visualModel.localRotation, targetRot, Time.deltaTime * 10f);
     }
 }
