@@ -15,6 +15,8 @@ public class KillerDroneAgent : Agent
     public Rigidbody targetRb;
     public LayerMask obstacleMask;
 
+    public TrainingArenaEnvironment arena;
+
     //flight kinematics tunning 
     public float maxSpeed = 12f;
     public float surgeAccel = 35f;
@@ -53,6 +55,8 @@ public class KillerDroneAgent : Agent
 
     public override void OnEpisodeBegin()
     {
+        if (arena != null) arena.ResetArena();
+
         _rb.linearVelocity = Vector3.zero;
         _rb.angularVelocity = Vector3.zero;
 
