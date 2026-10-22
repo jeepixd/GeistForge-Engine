@@ -199,7 +199,8 @@ public class KillerDroneAgent : Agent
         
        
             //strike mode 
-            float rStrike = facingGate * (0.7f * Mathf.Clamp(closingSpeed / maxSpeed, -1f, 1f) + 0.3f * (1f - Mathf.Clamp01(dist3D / maxSensorRange)));
+            // Pure closing speed in strike mode (no passive loitering reward)
+            float rStrike = facingGate * Mathf.Clamp(closingSpeed / maxSpeed, -1f, 1f);
             
         
         float stepReward = 0.01f * ((1f - aggression) * rStalk + aggression * rStrike);
@@ -209,7 +210,7 @@ public class KillerDroneAgent : Agent
         {
             if(aggression >= 0.5f)
             {
-                AddReward(2.0f * aggression * facingGate);
+                AddReward(3.5f * aggression * facingGate);
             }
             else
             {

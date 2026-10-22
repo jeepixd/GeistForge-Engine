@@ -663,6 +663,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrainingArena
       objectReference: {fileID: 0}
+    - target: {fileID: 3680765056102899186, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 5022602860645237092, guid: a1577a2cb71c08d48ba4c1cdecef3d98, type: 3}
+    - target: {fileID: 3680765056102899186, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
+      propertyPath: m_BehaviorType
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5992608264181227791, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
