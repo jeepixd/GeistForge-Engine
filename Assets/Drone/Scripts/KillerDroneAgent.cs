@@ -165,9 +165,10 @@ public class KillerDroneAgent : Agent
         float dXZ = new Vector2(toTarget.x, toTarget.z).magnitude;
         float deltaY = transform.position.y - target.position.y;
 
-        //multiplicative facing gate 
-        float rawDot = Vector3.Dot(transform.forward, dirToTarget);
-        float facingGate = rawDot > 0f ? (rawDot * rawDot) : 0f;
+        // Multiplicative facing gate (planar XZ horizontal yaw alignment)
+        Vector3 dirToTargetXZ = new Vector3(toTarget.x, 0f, toTarget.z).normalized;
+        float rawDotXZ = Vector3.Dot(transform.forward, dirToTargetXZ);
+        float facingGate = rawDotXZ > 0f ? (rawDotXZ * rawDotXZ) : 0f;
 
         Vector3 targetVel = targetRb != null ? targetRb.linearVelocity : Vector3.zero;
         float closingSpeed = Vector3.Dot(_rb.linearVelocity - targetVel, dirToTarget);
@@ -204,7 +205,7 @@ public class KillerDroneAgent : Agent
         float stepReward = 0.01f * ((1f - aggression) * rStalk + aggression * rStrike);
         AddReward(stepReward);
 
-        if(dist3D < 0.8f)
+        if(dist3D < 1.15f)
         {
             if(aggression >= 0.5f)
             {
