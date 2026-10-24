@@ -114,7 +114,7 @@ public class KillerDroneAgent : Agent
         float normalizedYawRate = Mathf.Clamp(_rb.angularVelocity.y / maxYawRateRad, -1f, 1f);
         sensor.AddObservation(normalizedYawRate);//1 float 
 
-        float groundDist = 10f;
+      /* float groundDist = 10f;
         if (Physics.Raycast(
             transform.position,
             Vector3.down,
@@ -123,10 +123,13 @@ public class KillerDroneAgent : Agent
             obstacleMask))
         {
             groundDist = hit.distance;
-        }
-
-        float normalizedGroundDist = Mathf.Clamp((groundDist - 2f) / 5f, -1f, 1f);
-        sensor.AddObservation(normalizedGroundDist);
+        }*/
+        // float normalizedGroundDist = Mathf.Clamp((groundDist - 2f) / 5f, -1f, 1f);
+        //sensor.AddObservation(normalizedGroundDist);
+        // Observation 14: Short-range warning (< 1.5m). Above 1.5m it outputs 0.0!
+        float groundDist = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 10f, obstacleMask)
+            ? hit.distance : 10f;
+        sensor.AddObservation(Mathf.Clamp01((1.5f - groundDist) / 1.5f));
         sensor.AddObservation(Mathf.Clamp01(aggression));
 
         
