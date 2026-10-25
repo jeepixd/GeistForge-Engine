@@ -178,12 +178,23 @@ PrefabInstance:
     - target: {fileID: 8464539769311955094, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
       propertyPath: droneAgent
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1794794135}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
+--- !u!114 &552748733 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2876390591633269181, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
+  m_PrefabInstance: {fileID: 1454829428}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5361c89ef5f113540b40d82fcb5d380f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KillerDroneAgent
 --- !u!1001 &587777812
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -243,12 +254,34 @@ PrefabInstance:
     - target: {fileID: 8464539769311955094, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
       propertyPath: droneAgent
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1742746644}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
+--- !u!114 &969972375 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2876390591633269181, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
+  m_PrefabInstance: {fileID: 5690147139347183629}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5361c89ef5f113540b40d82fcb5d380f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KillerDroneAgent
+--- !u!114 &1171266970 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2876390591633269181, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
+  m_PrefabInstance: {fileID: 1745095391}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5361c89ef5f113540b40d82fcb5d380f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KillerDroneAgent
 --- !u!1001 &1454829428
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -312,12 +345,23 @@ PrefabInstance:
     - target: {fileID: 8464539769311955094, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
       propertyPath: droneAgent
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 552748733}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
+--- !u!114 &1742746644 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2876390591633269181, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
+  m_PrefabInstance: {fileID: 587777812}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5361c89ef5f113540b40d82fcb5d380f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KillerDroneAgent
 --- !u!1001 &1745095391
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -377,7 +421,7 @@ PrefabInstance:
     - target: {fileID: 8464539769311955094, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
       propertyPath: droneAgent
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1171266970}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -520,6 +564,17 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &1794794135 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2876390591633269181, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
+  m_PrefabInstance: {fileID: 8879848}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5361c89ef5f113540b40d82fcb5d380f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KillerDroneAgent
 --- !u!1 &2047512620
 GameObject:
   m_ObjectHideFlags: 0
@@ -754,7 +809,7 @@ PrefabInstance:
     - target: {fileID: 8464539769311955094, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
       propertyPath: droneAgent
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 969972375}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
