@@ -24,6 +24,8 @@ public class TrainingArenaEnvironment : MonoBehaviour
     private int _activePillars = 6;
     private int _activeBeams = 2;
     private bool _enableKnockback = false;
+    private float _targetGoalY = 1.0f;
+    private float _currentCeilingY = 9.0f;
 
     // Target Bot State Machine
     private enum BotState { Stationary, BullRush, Serpentine, PillarHug }
@@ -61,15 +63,17 @@ public class TrainingArenaEnvironment : MonoBehaviour
 
         // 2. Randomize Ceiling Height
         float ceilingY = Random.Range(minCeiling, 10.0f);
+        _currentCeilingY = ceilingY;
         if (ceilingTransform != null)
         {
             ceilingTransform.localPosition = new Vector3(0f, ceilingY, 0f);
         }
 
-        // 3. Spawn Target in a clear location
+        // 3. Spawn Target in a clear location with true 3D elevation
+        float maxTargetSpawnY = Mathf.Max(1.5f, ceilingY - 3.2f); // Leaves 3.2m headroom for the +2m Stalk perch
         Vector3 targetLocalPos = new Vector3(
             Random.Range(-arenaHalfExtentXZ * 0.6f, arenaHalfExtentXZ * 0.6f),
-            1.0f,
+            Random.Range(1.0f, maxTargetSpawnY),
             Random.Range(-arenaHalfExtentXZ * 0.6f, arenaHalfExtentXZ * 0.6f)
         );
 
@@ -79,6 +83,7 @@ public class TrainingArenaEnvironment : MonoBehaviour
             targetRb.linearVelocity = Vector3.zero;
             targetRb.angularVelocity = Vector3.zero;
         }
+        _targetGoalY = targetLocalPos.y;
 
         // 4. Spawn Drone 2m to 9m away at random elevation and yaw
         Vector2 randCircle = Random.insideUnitCircle.normalized * Random.Range(2.0f, 9.0f);
@@ -193,6 +198,9 @@ public class TrainingArenaEnvironment : MonoBehaviour
 
         Vector2 randDir = Random.insideUnitCircle.normalized;
         _moveDir = new Vector3(randDir.x, 0f, randDir.y);
+
+        float maxBotY = Mathf.Max(1.5f, _currentCeilingY - 3.2f);
+        _targetGoalY = Random.Range(1.0f, maxBotY);
     }
 
     /// <summary>
@@ -236,10 +244,21 @@ public class TrainingArenaEnvironment : MonoBehaviour
                 break;
         }
 
+        // Active 3D Vertical Flight toward _targetGoalY
+        float verticalError = _targetGoalY - targetRb.transform.localPosition.y;
+        float verticalSpeed = Mathf.Clamp(verticalError * 2.0f, -speed * 0.6f, speed * 0.6f);
+        if (_currentState == BotState.Serpentine)
+        {
+            verticalSpeed = Mathf.Cos(_serpentinePhase * 0.8f) * (speed * 0.5f);
+        }
+        desiredVel.y = _currentState == BotState.Stationary ? 0f : verticalSpeed;
+
         // Bounce cleanly off outer arena boundaries
         Vector3 localPos = targetRb.transform.localPosition;
         if (Mathf.Abs(localPos.x) > arenaHalfExtentXZ - 1.0f) _moveDir.x = -Mathf.Sign(localPos.x);
         if (Mathf.Abs(localPos.z) > arenaHalfExtentXZ - 1.0f) _moveDir.z = -Mathf.Sign(localPos.z);
+        if (localPos.y < 1.0f && desiredVel.y < 0f) desiredVel.y = -desiredVel.y;
+        if (localPos.y > _currentCeilingY - 3.0f && desiredVel.y > 0f) desiredVel.y = -desiredVel.y;
 
         targetRb.linearVelocity = Vector3.Lerp(targetRb.linearVelocity, desiredVel, Time.fixedDeltaTime * 8f);
     }

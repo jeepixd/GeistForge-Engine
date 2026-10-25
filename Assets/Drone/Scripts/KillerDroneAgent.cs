@@ -174,6 +174,7 @@ public class KillerDroneAgent : Agent
         float facingGate = rawDotXZ > 0f ? (rawDotXZ * rawDotXZ) : 0f;
 
         Vector3 targetVel = targetRb != null ? targetRb.linearVelocity : Vector3.zero;
+        Vector3 relVel = _rb.linearVelocity - targetVel;
         float closingSpeed = Vector3.Dot(_rb.linearVelocity - targetVel, dirToTarget);
         float retreatSpeed = - Vector3.Dot(_rb.linearVelocity, dirToTarget);
 
@@ -199,13 +200,23 @@ public class KillerDroneAgent : Agent
             float rStrafe = (dXZ >= 2.2f && dXZ <= 3.8f) ? (0.15f * facingGate * Mathf.Clamp01(strafeSpeed / maxSpeed)) : 0f;
 
             float rStalk = rPerch + rApproach + rBreach + rStrafe;
-        
-       
-            //strike mode 
+
+
+        // 2. strike mode 
+        // 3D closing speed + vertical dive speed 
+        float vertStrikeVel = Mathf.Sign(toTarget.y) * relVel.y;
+        float rClose = 0.8f * Mathf.Clamp(closingSpeed / maxSpeed, -1f, 1f) + 0.4f * Mathf.Clamp(vertStrikeVel / maxSpeed, -1f, 1f);
+        //terminal magnet inside 2.5m
+        float rMagnet = dist3D < 2.5f ? 0.6f * Mathf.Exp(-Mathf.Pow(Mathf.Max(0f, dist3D - 1.10f), 2f) / (2f * 0.45f * 0.45f)) : 0f;
+
+        float rUrgency = -0.35f;
+        float rStrike = facingGate * (rClose + rMagnet) + rUrgency;
+
+           /*       //strike mode 
             // Pure closing speed in strike mode (no passive loitering reward)
             float rStrike = facingGate * Mathf.Clamp(closingSpeed / maxSpeed, -1f, 1f);
             
-        
+        */
         float stepReward = 0.01f * ((1f - aggression) * rStalk + aggression * rStrike);
         AddReward(stepReward);
 
@@ -228,6 +239,15 @@ public class KillerDroneAgent : Agent
     {
         if (collision.gameObject.CompareTag("Obstacle"))
         {
+
+            //floor mercy rule : if diving in strike mode and scraping horizontal floor , minor penalty , dont end episdoe !
+            bool isHorizontalFloor = collision.contactCount > 0 && collision.GetContact(0).normal.y > 0.7f;
+            if(aggression >= 0.5f && isHorizontalFloor)
+            {
+                AddReward(-0.02f);
+                return;
+            }
+
             AddReward(-1.0f);
             EndEpisode();
         }
@@ -253,3 +273,4 @@ public class KillerDroneAgent : Agent
         visualModel.localRotation = Quaternion.Slerp(visualModel.localRotation, targetRot, Time.deltaTime * 10f);
     }
 }
+ 
