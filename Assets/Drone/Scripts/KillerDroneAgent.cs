@@ -19,10 +19,10 @@ public class KillerDroneAgent : Agent
 
     //flight kinematics tunning 
     public float maxSpeed = 12f;
-    public float surgeAccel = 35f;
+    public float surgeAccel = 45f;
     public float swayAccel = 30f;
     public float heaveAccel = 25f;
-    public float maxYawRateDeg = 240f;
+    public float maxYawRateDeg = 380f;
     public float maxSensorRange = 20f;
 
     //cosmetics banking 
@@ -45,7 +45,7 @@ public class KillerDroneAgent : Agent
     {
         _rb = GetComponent<Rigidbody>();
         _rb.mass = 1.5f;
-        _rb.linearDamping = 4.0f;
+        _rb.linearDamping = 5.0f;
         _rb.angularDamping = 8.0f;
         _rb.useGravity = false;
         _rb.interpolation = RigidbodyInterpolation.Interpolate;
