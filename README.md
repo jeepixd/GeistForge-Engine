@@ -6,11 +6,11 @@
 [![Action Space](https://img.shields.io/badge/Action%20Space-Continuous%206--DoF-red.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)]()
 
-> **A research-grade, 6-DoF autonomous aerial combat agent trained via continuous Proximal Policy Optimization (PPO) across 11.5M cumulative simulation steps and deployed natively to Unity Sentis for sub-millisecond, zero-Python ONNX inference.**
+> A 6-DoF autonomous aerial combat agent trained via continuous Proximal Policy Optimization (PPO) across 11.5M cumulative simulation steps and deployed natively to Unity Sentis for sub-millisecond, zero-Python ONNX inference.
 
 ---
 
-## 📽️ System Architecture Overview
+## System Architecture
 
 GeistForge decouples physical flight translation (driven by the RL agent and physics solver) from procedural visual mesh banking, enabling high-impulse combat maneuvering without destabilizing orientation.
 
@@ -51,11 +51,11 @@ flowchart TD
 
 ---
 
-## 🧠 Dual-Doctrine Behavioral Spectrum ($\alpha$)
+## Dual-Doctrine Behavioral Spectrum ($\alpha$)
 
 The policy is conditioned on a continuous runtime parameter $\alpha \in [0.0, 1.0]$:
 
-| Doctrine | Parametric Mode | Visual Glow | Target Behavior |
+| Doctrine | Parametric Mode | Visual Telemetry | Target Behavior |
 | :--- | :---: | :---: | :--- |
 | **Tactical Stalking** | $\alpha = 0.0$ | **Cyan** | Maintains an elevated perch envelope ($3\,\text{m}$ offset, $+2\,\text{m}$ elevation), circle-strafes, and evades target intrusions. |
 | **Parametric Blend** | $0 < \alpha < 1$ | **Interpolated** | Dynamic hybrid behavior; closes range while maintaining evasive lateral thruster readiness. |
@@ -63,7 +63,7 @@ The policy is conditioned on a continuous runtime parameter $\alpha \in [0.0, 1.
 
 ---
 
-## 📐 Mathematical Formulation
+## Mathematical Formulation
 
 ### 1. Multiplicative Planar Facing Gate ($G_{\text{face}}$)
 To permanently eliminate the "Moonwalk Trap" (where the agent earns rewards while flying backward) without penalizing steep downward dive angles, the forward vector is projected onto the horizontal $XZ$ plane:
@@ -96,7 +96,7 @@ $$R_{\text{step}} = 0.01 \cdot \left[ (1 - \alpha) R_{\text{stalk}} + \alpha R_{
 
 ---
 
-## 🔬 Engineering Post-Mortem: Overcoming RL Failure Modes
+## Engineering Post-Mortem: Overcoming RL Failure Modes
 
 | # | Phenomenon Encountered | Root Mathematical / Physical Cause | Production Resolution |
 |---|---|---|---|
@@ -107,7 +107,7 @@ $$R_{\text{step}} = 0.01 \cdot \left[ (1 - \alpha) R_{\text{stalk}} + \alpha R_{
 
 ---
 
-## 📊 Observation & Action Space Specification
+## Observation & Action Space Specification
 
 ### Observation Vector (54 Floats)
 - **`[0..2]`**: Egocentric target position (normalized $/ 20\,\text{m}$)
@@ -128,7 +128,7 @@ $$R_{\text{step}} = 0.01 \cdot \left[ (1 - \alpha) R_{\text{stalk}} + \alpha R_{
 
 ---
 
-## 🚀 Quickstart & Inference in Unity Sentis
+## Quickstart & Inference in Unity Sentis
 
 No Python environment or PyTorch installation is required to run the trained model in your scene.
 
@@ -149,7 +149,7 @@ No Python environment or PyTorch installation is required to run the trained mod
 
 ---
 
-## 🛠️ Tech Stack & Hardware
+## Tech Stack & Hardware
 
 - **Engine**: Unity 6000.0 LTS (Universal Render Pipeline)
 - **Inference Runtime**: Unity Sentis (ONNX Runtime)
@@ -159,5 +159,5 @@ No Python environment or PyTorch installation is required to run the trained mod
 
 ---
 
-## 📜 License
+## License
 Distributed under the MIT License. See `LICENSE` for more information.
