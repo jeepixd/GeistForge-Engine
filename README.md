@@ -132,10 +132,9 @@ No Python environment or PyTorch installation is required to run the trained mod
    git clone https://github.com/jeepixd/GeistForge-Engine.git
    ```
 2. Open the project in **Unity 6 (6000.0+)**.
-3. Open the demo scene at:
-   ```
-   Assets/Drone/Scene/TrainingArena.unity
-   ```
+3. Open either scene under `Assets/Drone/Scene/`:
+   - `Testing Area.unity`: Dedicated single-agent showcase arena.
+   - `TrainingArena.unity`: Parallel curriculum training environment.
 4. Select the `Drone` GameObject in the hierarchy:
    - Verify `Behavior Parameters -> Model` is set to `KillerDrone_Stage3_CombatStress.onnx`.
    - Set `Behavior Type` to `Inference Only`.
