@@ -718,6 +718,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2055763020318166532, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 32086b3e1d0f8c04b8c2a35880cc89b0, type: 2}
     - target: {fileID: 2712112340315820761, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.00000035017726
@@ -754,6 +758,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrainingArena
       objectReference: {fileID: 0}
+    - target: {fileID: 3418915742091742724, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.46
+      objectReference: {fileID: 0}
+    - target: {fileID: 3418915742091742724, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.32
+      objectReference: {fileID: 0}
     - target: {fileID: 3680765056102899186, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
       propertyPath: m_Model
       value: 
@@ -762,6 +774,10 @@ PrefabInstance:
       propertyPath: m_BehaviorType
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5463824155434417870, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 32086b3e1d0f8c04b8c2a35880cc89b0, type: 2}
     - target: {fileID: 5992608264181227791, guid: fcb3f7fa6b502e64e82c7016bbd27911, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
