@@ -150,42 +150,6 @@ public class KillerDroneAgent : Agent
         }
         Vector3 totalForce = (transform.forward * surge * surgeAccel * mult) + (transform.right * sway * swayAccel) + (transform.up * heave * heaveAccel);
 
-        // =========================================================================
-        // CONTROL BARRIER ACTUATOR SHIELD (Deterministic Safe-RL Air Cushion)
-        // =========================================================================
-        // 1. Tangential Obstacle Deflection Shield (Anti-Corner Clipping at high speed)
-        if (_rb.linearVelocity.sqrMagnitude > 1.0f)
-        {
-            if (Physics.SphereCast(transform.position, 0.45f, _rb.linearVelocity.normalized, out RaycastHit obsHit, 1.35f, obstacleMask))
-            {
-                Vector3 hitNormal = obsHit.normal;
-                hitNormal.y = 0f;
-                if (hitNormal.sqrMagnitude > 0.001f) hitNormal.Normalize();
-                Vector3 deflection = Vector3.ProjectOnPlane(_rb.linearVelocity, hitNormal).normalized;
-                float urgency = Mathf.Clamp01((1.35f - obsHit.distance) / 1.35f);
-                totalForce += (deflection * 15f + hitNormal * 25f) * urgency;
-            }
-        }
-
-        // 2. Matador Evasion Shield (Close-Range Bull-Rush Evasion at alpha < 0.5)
-        if (aggression < 0.5f && target != null)
-        {
-            Vector3 toTarget = target.position - transform.position;
-            float dXZ = new Vector2(toTarget.x, toTarget.z).magnitude;
-            Vector3 targetVel = targetRb != null ? targetRb.linearVelocity : Vector3.zero;
-            float closingSpeed = Vector3.Dot(_rb.linearVelocity - targetVel, toTarget.normalized);
-
-            if (dXZ < 2.0f && closingSpeed > 1.5f)
-            {
-                Vector3 lateralEvade = Vector3.Cross(Vector3.up, toTarget.normalized).normalized;
-                if (Vector3.Dot(_rb.linearVelocity, lateralEvade) < 0f) lateralEvade = -lateralEvade;
-                Vector3 matadorImpulse = (lateralEvade * 35f) + (Vector3.up * 20f);
-                float breachUrgency = (2.0f - dXZ) / 2.0f;
-                totalForce += matadorImpulse * breachUrgency;
-            }
-        }
-        // =========================================================================
-
         _rb.AddForce(totalForce, ForceMode.Acceleration);
         _rb.angularVelocity = new Vector3(0f, yawCmd * maxYawRateDeg * Mathf.Deg2Rad, 0f);
         EvaluateCombatReward();

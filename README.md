@@ -27,12 +27,7 @@ flowchart TD
         B2["Continuous Action Distribution\n(Surge, Sway, Heave, Yaw)"]
     end
 
-    subgraph Shield ["3. Control Barrier Actuator Shield"]
-        C1["Tangential Obstacle Deflection\n(Continuous SphereCast Filter)"]
-        C2["Matador Evasion Filter\n(Close-Range Charge Decoupling)"]
-    end
-
-    subgraph Runtime ["4. Unity 6 Physical Simulation"]
+    subgraph Runtime ["3. Unity 6 Physical Simulation"]
         D1["6-DoF Rigidbody AddForce / Torque\n(Zero-Python Sentis ONNX Runtime)"]
         D2["Procedural Cosmetic Banking\n(LateUpdate Predator Mesh Lean)"]
         D3["URP Emissive Telemetry\n(Cyan Stalk ↔ Crimson Strike)"]
@@ -42,9 +37,7 @@ flowchart TD
     A2 --> B1
     A3 --> B1
     B1 --> B2
-    B2 --> C1
-    C1 --> C2
-    C2 --> D1
+    B2 --> D1
     D1 --> D2
     D1 --> D3
 ```
@@ -103,7 +96,7 @@ $$R_{\text{step}} = 0.01 \cdot \left[ (1 - \alpha) R_{\text{stalk}} + \alpha R_{
 | **1** | **The "War Horn" Temporal Shortcut** | Flipping $\alpha: 0 \to 1$ mid-episode allowed Bellman backups ($V(s_t)$) to bootstrap terminal strike payouts during Stalk mode, turning Stalk into a passive waiting room. | **Episode-Static Stratified $\alpha$-Sampling** (40% pure Stalk, 30% pure Strike, 30% $U(0,1)$) during training while preserving frame-by-frame slider conditioning at runtime. |
 | **2** | **Feature Collinearity (Floor Altimeter Shortcut)** | Fixed target elevation in early stages made floor distance (`obs[14]`) 100% collinear with target relative height at $4\times$ higher signal variance. | Clamped `obs[14]` to a **short-range floor-proximity warning** active only below $1.5\,\text{m}$ ($0.0$ in mid-air), forcing the MLP to wire heave ($a_2$) strictly to ego-relative target elevation. |
 | **3** | **The 1.48m Geometric Stall & Pitch Dilution** | A 3D dot product on a horizon-locked Rigidbody penalized steep downward dives by $\cos^2(\phi_{\text{pitch}})$, while passive proximity rewards created a zero-velocity hovering equilibrium. | Projected $G_{\text{face}}$ onto the horizontal $XZ$ plane, replaced passive proximity with **3D + vertical closing velocity**, and added a $-0.35$ urgency bleed. |
-| **4** | **High-Inertia Corner Clipping & Bull-Rush Asymmetry** | Sparse terminal crash penalties ($-1.0$) at 12.5 Hz decision intervals under-correct for momentum during tight pillar weaves at $12\,\text{m/s}$. | Implemented a **Hybrid Shielded-RL Architecture**: paired the 11.5M-step Sentis ONNX policy with a deterministic C# Control Barrier Actuator Shield for continuous obstacle deflection and matador evasion. |
+| **4** | **The Collider Blockade (Physical Boundary Bug)** | Rigid physical contact occurred at $0.98\,\text{m}$ ($r_{\text{drone}} + r_{\text{target}}$), rendering the original $<0.80\,\text{m}$ strike condition physically unattainable without collider penetration. | Expanded terminal strike detonation threshold to $1.15\,\text{m}$, aligning reward verification with the continuous dynamic physics simulation. |
 
 ---
 
