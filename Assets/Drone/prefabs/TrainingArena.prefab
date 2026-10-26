@@ -43,262 +43,6 @@ Transform:
   - {fileID: 8459430459084879811}
   m_Father: {fileID: 5992608264181227791}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &246123858634593805
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 620237902615413184}
-  - component: {fileID: 4996888393408527516}
-  - component: {fileID: 3680765056102899186}
-  - component: {fileID: 2876390591633269181}
-  - component: {fileID: 5742987697344869483}
-  - component: {fileID: 7045620621071206764}
-  - component: {fileID: 8358638085655717301}
-  - component: {fileID: 6090050552922231267}
-  - component: {fileID: 1306981487131179392}
-  m_Layer: 3
-  m_Name: Drone
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &620237902615413184
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 246123858634593805}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.1, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 4892359505402588670}
-  m_Father: {fileID: 5992608264181227791}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &4996888393408527516
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 246123858634593805}
-  serializedVersion: 5
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!114 &3680765056102899186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 246123858634593805}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d1c4e0b1822b495aa52bc52839ecb30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.Policies.BehaviorParameters
-  m_BrainParameters:
-    VectorObservationSize: 16
-    NumStackedVectorObservations: 1
-    m_ActionSpec:
-      m_NumContinuousActions: 4
-      BranchSizes: 
-    VectorActionSize: 04000000
-    VectorActionDescriptions: []
-    VectorActionSpaceType: 1
-    hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
-  m_InferenceDevice: 0
-  m_BehaviorType: 0
-  m_BehaviorName: KillerDrone
-  TeamId: 0
-  m_UseChildSensors: 1
-  m_UseChildActuators: 1
-  m_DeterministicInference: 0
-  m_ObservableAttributeHandling: 0
---- !u!114 &2876390591633269181
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 246123858634593805}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5361c89ef5f113540b40d82fcb5d380f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::KillerDroneAgent
-  agentParameters:
-    maxStep: 0
-  hasUpgradedFromAgentParameters: 1
-  MaxStep: 1000
-  aggression: 0
-  target: {fileID: 3418915742091742724}
-  targetRb: {fileID: 8431348200713847140}
-  obstacleMask:
-    serializedVersion: 2
-    m_Bits: 1
-  arena: {fileID: 8464539769311955094}
-  maxSpeed: 12
-  surgeAccel: 35
-  swayAccel: 30
-  heaveAccel: 25
-  maxYawRateDeg: 240
-  maxSensorRange: 20
-  visualModel: {fileID: 4892359505402588670}
-  maxBankAngle: 22
-  randomDraw: 0
-  droneMeshRenderer: {fileID: 6450629589256148388}
-  stalkEyeColor: {r: 0, g: 2.5, b: 4, a: 1}
-  strikeEyeColor: {r: 5, g: 0.2, b: 0.1, a: 1}
---- !u!114 &5742987697344869483
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 246123858634593805}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.DecisionRequester
-  DecisionPeriod: 4
-  DecisionStep: 0
-  TakeActionsBetweenDecisions: 1
---- !u!114 &7045620621071206764
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 246123858634593805}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bb6b867a41448888c1cd4f99643ad71, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.Sensors.RayPerceptionSensorComponent3D
-  m_SensorName: Sensor_Horizon
-  m_DetectableTags:
-  - Obstacle
-  m_RaysPerDirection: 4
-  m_MaxRayDegrees: 180
-  m_SphereCastRadius: 0.25
-  m_RayLength: 8
-  m_RayLayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967291
-  m_ObservationStacks: 1
-  m_AlternatingRayOrder: 1
-  m_UseBatchedRaycasts: 0
-  rayHitColor: {r: 1, g: 0, b: 0, a: 1}
-  rayMissColor: {r: 1, g: 1, b: 1, a: 1}
-  m_StartVerticalOffset: 0
-  m_EndVerticalOffset: 0
---- !u!114 &8358638085655717301
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 246123858634593805}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bb6b867a41448888c1cd4f99643ad71, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.Sensors.RayPerceptionSensorComponent3D
-  m_SensorName: Sensor_UpCone
-  m_DetectableTags:
-  - Obstacle
-  m_RaysPerDirection: 2
-  m_MaxRayDegrees: 120
-  m_SphereCastRadius: 0.25
-  m_RayLength: 8
-  m_RayLayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967291
-  m_ObservationStacks: 1
-  m_AlternatingRayOrder: 1
-  m_UseBatchedRaycasts: 0
-  rayHitColor: {r: 1, g: 0, b: 0, a: 1}
-  rayMissColor: {r: 1, g: 1, b: 1, a: 1}
-  m_StartVerticalOffset: 0
-  m_EndVerticalOffset: 3.5
---- !u!114 &6090050552922231267
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 246123858634593805}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6bb6b867a41448888c1cd4f99643ad71, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.ML-Agents::Unity.MLAgents.Sensors.RayPerceptionSensorComponent3D
-  m_SensorName: Sensor_DownCone
-  m_DetectableTags:
-  - Obstacle
-  m_RaysPerDirection: 2
-  m_MaxRayDegrees: 120
-  m_SphereCastRadius: 0.25
-  m_RayLength: 8
-  m_RayLayerMask:
-    serializedVersion: 2
-    m_Bits: 4294967291
-  m_ObservationStacks: 1
-  m_AlternatingRayOrder: 1
-  m_UseBatchedRaycasts: 0
-  rayHitColor: {r: 1, g: 0, b: 0, a: 1}
-  rayMissColor: {r: 1, g: 1, b: 1, a: 1}
-  m_StartVerticalOffset: 0
-  m_EndVerticalOffset: -3.5
---- !u!135 &1306981487131179392
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 246123858634593805}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &469829549946756487
 GameObject:
   m_ObjectHideFlags: 0
@@ -2527,80 +2271,77 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!1001 &4931334328916085269
+--- !u!1001 &8672951810543920388
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 620237902615413184}
+    m_TransformParent: {fileID: 5992608264181227791}
     m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: 55ec6b76b5d11e8448c8d5d65b7b562c, type: 3}
+    - target: {fileID: 6896838111613846713, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
+      propertyPath: arena
+      value: 
+      objectReference: {fileID: 8464539769311955094}
+    - target: {fileID: 6896838111613846713, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 3418915742091742724}
+    - target: {fileID: 6896838111613846713, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
+      propertyPath: targetRb
+      value: 
+      objectReference: {fileID: 8431348200713847140}
+    - target: {fileID: 8126469200000394436, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 55ec6b76b5d11e8448c8d5d65b7b562c, type: 3}
+    - target: {fileID: 8126469200000394436, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.1
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 55ec6b76b5d11e8448c8d5d65b7b562c, type: 3}
+    - target: {fileID: 8126469200000394436, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 55ec6b76b5d11e8448c8d5d65b7b562c, type: 3}
+    - target: {fileID: 8126469200000394436, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 55ec6b76b5d11e8448c8d5d65b7b562c, type: 3}
+    - target: {fileID: 8126469200000394436, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 55ec6b76b5d11e8448c8d5d65b7b562c, type: 3}
+    - target: {fileID: 8126469200000394436, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 55ec6b76b5d11e8448c8d5d65b7b562c, type: 3}
+    - target: {fileID: 8126469200000394436, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 55ec6b76b5d11e8448c8d5d65b7b562c, type: 3}
+    - target: {fileID: 8126469200000394436, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 55ec6b76b5d11e8448c8d5d65b7b562c, type: 3}
+    - target: {fileID: 8126469200000394436, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 55ec6b76b5d11e8448c8d5d65b7b562c, type: 3}
+    - target: {fileID: 8126469200000394436, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -7705786697039176326, guid: 55ec6b76b5d11e8448c8d5d65b7b562c, type: 3}
-      propertyPath: m_Layer
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: 55ec6b76b5d11e8448c8d5d65b7b562c, type: 3}
+    - target: {fileID: 8878543062731911945, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
       propertyPath: m_Name
-      value: KillerDrone
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: 55ec6b76b5d11e8448c8d5d65b7b562c, type: 3}
-      propertyPath: m_Layer
-      value: 3
+      value: Drone
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 65702495048144492, guid: 55ec6b76b5d11e8448c8d5d65b7b562c, type: 3}
-    - {fileID: -8700617353114198275, guid: 55ec6b76b5d11e8448c8d5d65b7b562c, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 55ec6b76b5d11e8448c8d5d65b7b562c, type: 3}
---- !u!4 &4892359505402588670 stripped
+  m_SourcePrefab: {fileID: 100100000, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
+--- !u!4 &620237902615413184 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 55ec6b76b5d11e8448c8d5d65b7b562c, type: 3}
-  m_PrefabInstance: {fileID: 4931334328916085269}
-  m_PrefabAsset: {fileID: 0}
---- !u!23 &6450629589256148388 stripped
-MeshRenderer:
-  m_CorrespondingSourceObject: {fileID: -7067657312159719503, guid: 55ec6b76b5d11e8448c8d5d65b7b562c, type: 3}
-  m_PrefabInstance: {fileID: 4931334328916085269}
+  m_CorrespondingSourceObject: {fileID: 8126469200000394436, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
+  m_PrefabInstance: {fileID: 8672951810543920388}
   m_PrefabAsset: {fileID: 0}
