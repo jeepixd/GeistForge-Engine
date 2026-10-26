@@ -6,6 +6,8 @@
 [![Action Space](https://img.shields.io/badge/Action%20Space-Continuous%206--DoF-red.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)]()
 
+![GeistForge Autonomous Flight Demo](media/demo.gif)
+
 > A 6-DoF autonomous aerial combat agent trained via continuous Proximal Policy Optimization (PPO) across 11.5M cumulative simulation steps and deployed natively to Unity Sentis for sub-millisecond, zero-Python ONNX inference.
 
 ---
