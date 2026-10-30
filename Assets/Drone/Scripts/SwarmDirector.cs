@@ -46,4 +46,34 @@ public class SwarmDirector : MonoBehaviour
         return (flankScore * blindspotWeight) + losScore - distPenalty;
 
     }
+
+    private KillerDroneAgent SelectNewStriker()
+    {
+        if (drones == null || playerTarget == null) return null;
+        if (drones.Count == 1) return drones[0];
+
+        KillerDroneAgent bestCandidate = null;
+        float highestScore = float.NegativeInfinity;
+        
+        for( int i =0; i < drones.Count; i++)
+        {
+            KillerDroneAgent candidate = drones[i];
+            if(candidate == null) continue;
+
+            //dont reselect the drone currently attacking unless its the only one alive 
+            if (candidate == _currentStriker && drones.Count > 1)
+                continue;
+
+            float score = CalculateTacticalScore(candidate);
+            if(score > highestScore)
+            {
+                highestScore = score;
+                bestCandidate = candidate;
+
+            }
+        }
+        return bestCandidate != null ? bestCandidate : _currentStriker;
+
+    }
+    
 }
