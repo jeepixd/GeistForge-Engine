@@ -50,7 +50,7 @@ public class SwarmDirector : MonoBehaviour
 
     private KillerDroneAgent SelectNewStriker()
     {
-        if (drones == null || playerTarget == null) return null;
+        if (drones == null || drones.Count== 0 || playerTarget == null) return null;
         if (drones.Count == 1) return drones[0];
 
         KillerDroneAgent bestCandidate = null;
