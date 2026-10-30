@@ -26,5 +26,24 @@ public class SwarmDirector : MonoBehaviour
     private KillerDroneAgent _currentStriker;
 
 
-    
+    private float CalculateTacticalScore(KillerDroneAgent drone)
+    {
+        if (drone == null || playerTarget == null) return -999f;
+        //vector pointing from player to drone 
+        Vector3 toDrone = drone.transform.position - playerTarget.position;
+        float dist = toDrone.magnitude;
+        Vector3 dirToDrone = dist > 0.001f ? (toDrone / dist) : Vector3.zero;
+        //blind spot flank bonus 
+        float flankScore = -Vector3.Dot(playerTarget.forward, dirToDrone);
+
+        //line of sight check
+        bool isBlocked = Physics.Raycast(drone.transform.position, -dirToDrone, dist, obstacleMask);
+        float losScore = isBlocked ? -losBlockedPenalty : losBonus;
+        //distance penalty 
+        float distPenalty = dist * distancePenatlyWeight;
+
+        //final weight sum 
+        return (flankScore * blindspotWeight) + losScore - distPenalty;
+
+    }
 }
