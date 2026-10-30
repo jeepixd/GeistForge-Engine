@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Rendering;
+using Unity.VisualScripting;
 
 
 public class SwarmDirector : MonoBehaviour
@@ -75,5 +76,15 @@ public class SwarmDirector : MonoBehaviour
         return bestCandidate != null ? bestCandidate : _currentStriker;
 
     }
-    
+    private void RotateStriker()
+    {
+        _currentStriker = SelectNewStriker();
+        _strikeTimer = strikeDuration; //resent the 4 sec cooldown
+    }
+    public void Update()
+    {
+
+    }
 }
+
+
