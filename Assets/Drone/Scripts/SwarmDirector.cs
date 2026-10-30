@@ -81,10 +81,82 @@ public class SwarmDirector : MonoBehaviour
         _currentStriker = SelectNewStriker();
         _strikeTimer = strikeDuration; //resent the 4 sec cooldown
     }
-    public void Update()
+    public void Start()
     {
+        _strikeTimer = 1.5f;
 
     }
+    public void Update()
+    {
+        //remove all drones that were destroyed 
+        drones.RemoveAll(d => d == null);
+        if (playerTarget == null || drones == null || drones.Count == 0) return;
+        if (_currentStriker == null)
+        {
+            RotateStriker();
+
+        }
+
+        _strikeTimer -= Time.deltaTime;
+        if(_strikeTimer <= 0f)
+        {
+            RotateStriker();
+        }
+
+        //smooth aggression blend for all drones 
+        for(int i = 0; i < drones.Count; i++)
+        {
+            KillerDroneAgent drone = drones[i];
+            if (drone == null) continue;
+
+            float targetAlpha = (drone == _currentStriker) ? 1.0f : 0.0f;
+
+            //smooth lside aggression 
+            drone.aggression = Mathf.MoveTowards(drone.aggression, targetAlpha, blendSpeed * Time.deltaTime);
+        }
+    }
+    public void RemoveDrone(KillerDroneAgent deadDrone)
+    {
+        if (deadDrone == null) return;
+        drones.Remove(deadDrone);
+        if(_currentStriker == deadDrone)
+        {
+            _currentStriker = null;
+            if(drones.Count > 0)
+            {
+                RotateStriker();
+
+            }
+        }
+
+    }
+
+    //ai generated gizmos method 
+    private void OnDrawGizmos()
+    {
+        if (playerTarget == null || drones == null) return;
+
+        for (int i = 0; i < drones.Count; i++)
+        {
+            KillerDroneAgent drone = drones[i];
+            if (drone == null) continue;
+
+            if (drone == _currentStriker)
+            {
+                // Striker = Crimson line + Target Sphere
+                Gizmos.color = Color.red;
+                Gizmos.DrawLine(drone.transform.position, playerTarget.position);
+                Gizmos.DrawWireSphere(drone.transform.position, 0.6f);
+            }
+            else
+            {
+                // Overwatch = Cyan line
+                Gizmos.color = Color.cyan;
+                Gizmos.DrawLine(drone.transform.position, playerTarget.position);
+            }
+        }
+    }
+
 }
 
 
