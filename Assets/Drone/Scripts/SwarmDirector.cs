@@ -85,6 +85,15 @@ public class SwarmDirector : MonoBehaviour
     {
         _strikeTimer = 1.5f;
 
+        //subscribe to every drone detonation event
+        foreach(var drone in drones)
+        {
+            if(drone != null && drone.TryGetComponent<DroneDetonator>(out var detonator))
+            {
+                detonator.OnDetonated += RemoveDrone;
+            }
+        }
+
     }
     public void Update()
     {
