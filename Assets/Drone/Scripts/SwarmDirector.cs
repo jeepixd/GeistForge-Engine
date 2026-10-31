@@ -6,6 +6,7 @@ using Unity.VisualScripting;
 
 public class SwarmDirector : MonoBehaviour
 {
+    [Range(0.0f, 1.0f)] public float attackMode = 0.0f;
     [Header("Swarm Roster & Target")]
     public Transform playerTarget;
     public List<KillerDroneAgent> drones = new List<KillerDroneAgent>();
@@ -99,7 +100,7 @@ public class SwarmDirector : MonoBehaviour
     {
         //remove all drones that were destroyed 
         drones.RemoveAll(d => d == null);
-        if (playerTarget == null || drones == null || drones.Count == 0) return;
+        if (playerTarget == null || drones == null || drones.Count == 0 || attackMode == 0) return;
         if (_currentStriker == null)
         {
             RotateStriker();
