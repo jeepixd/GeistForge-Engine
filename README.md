@@ -1,157 +1,176 @@
-# GeistForge: 6-DoF Autonomous Combat Drone AI
+# GeistForge: Autonomous Aerial Combat Swarm AI
 
 [![Unity 6](https://img.shields.io/badge/Unity-6000.0.x-blue.svg)](https://unity.com/)
 [![ML-Agents](https://img.shields.io/badge/ML--Agents-0.30.0-orange.svg)](https://github.com/Unity-Technologies/ml-agents)
 [![Inference Engine](https://img.shields.io/badge/Runtime-Unity%20Sentis%20(ONNX)-green.svg)](https://unity.com/products/sentis)
+[![Tactical Architecture](https://img.shields.io/badge/Architecture-Two--Tier%20Swarm%20Director-darkblue.svg)]()
 [![Action Space](https://img.shields.io/badge/Action%20Space-Continuous%206--DoF-red.svg)]()
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)]()
 
 ![GeistForge Autonomous Flight Demo](media/demo.gif)
 
-> A 6-DoF autonomous aerial combat agent trained via continuous Proximal Policy Optimization (PPO) across 11.5M cumulative simulation steps and deployed natively to Unity Sentis for sub-millisecond, zero-Python ONNX inference.
+> A 6-DoF autonomous aerial combat drone swarm trained via continuous Proximal Policy Optimization (PPO) across 11.5M cumulative simulation steps, coordinated by a decoupled two-tier Tactical Swarm Director ("Wolfpack Protocol"), and deployed natively to Unity Sentis for sub-0.1ms, zero-Python ONNX inference.
+
+---
+
+## Executive Overview
+
+Traditional 3D aerial navigation in game engines relies on layered NavMesh slicing or predetermined spline rails. These techniques break down when agents must maneuver with genuine 6-DoF momentum, high-speed physical drag, dynamic obstacle fields, and multi-agent spatial coordination.
+
+GeistForge solves this through a hybrid architecture:
+1. **Tier 1 (Motor Cortex)**: An end-to-end continuous PPO neural network running in Unity Sentis, translating 54 spatial observations directly into 4 continuous motor thrusters at sub-0.1ms latency.
+2. **Tier 2 (Tactical Swarm Director)**: A lightweight, decoupled C# squad coordinator that evaluates geometric line-of-sight and player blind-spot vectors to dynamically allocate Striker and Overwatch roles across the squad.
+3. **Emergent Mutual Avoidance**: By registering each drone as an `Obstacle`, the existing 38-whisker raycast perception arrays naturally prevent clumping and squad collisions with zero multi-agent retraining.
 
 ---
 
 ## System Architecture
 
-GeistForge decouples physical flight translation (driven by the RL agent and physics solver) from procedural visual mesh banking, enabling high-impulse combat maneuvering without destabilizing orientation.
-
 ```mermaid
 flowchart TD
-    subgraph Perception ["1. Multi-Tier Perception (54 Floats)"]
-        A1["16-Float Egocentric Tensor\n(Relative Kinematics & Altitudes)"]
-        A2["38-Float Raycast Sensor Rig\n(360° Horizon, UpCone, DownCone)"]
-        A3["Conditioning Input\n(Aggression α ∈ [0, 1])"]
+    subgraph Tier2 ["Tier 2: Tactical Swarm Director (C# Squad Brain)"]
+        S1["Tactical Scoring Engine\n(Blindspot Dot Product & LOS Raycasts)"]
+        S2["Dynamic Role Allocation\n(1 Striker: α -> 1.0 | N-1 Overwatch: α -> 0.0)"]
+        S3["Parametric Blending & Rotation\n(Mathf.MoveTowards & Attack Mode Gate)"]
     end
 
-    subgraph Policy ["2. Neural Policy (PPO Actor-Critic)"]
-        B1["MLP Feature Extractor"]
-        B2["Continuous Action Distribution\n(Surge, Sway, Heave, Yaw)"]
+    subgraph Tier1 ["Tier 1: Neural Motor Cortex (Unity Sentis ONNX Runtime)"]
+        P1["Spatial Perception (54 Floats)\n- 16 Kinematics & Altitudes\n- 38 Whisker Raycasts (360°)\n- Aggression Parameter (α)"]
+        P2["PPO Actor-Critic Policy\n(Sub-0.1ms GPU/CPU Inference)"]
+        P3["Continuous Actions\n(Surge, Sway, Heave, Yaw)"]
     end
 
-    subgraph Runtime ["3. Unity 6 Physical Simulation"]
-        D1["6-DoF Rigidbody AddForce / Torque\n(Zero-Python Sentis ONNX Runtime)"]
-        D2["Procedural Cosmetic Banking\n(LateUpdate Predator Mesh Lean)"]
-        D3["URP Emissive Telemetry\n(Cyan Stalk ↔ Crimson Strike)"]
+    subgraph Simulation ["Unity 6 Physical Simulation & Combat Execution"]
+        R1["6-DoF Rigidbody Dynamics\n(Continuous Force & Torque Application)"]
+        R2["Emergent Squad Separation\n(Whiskers Detect Squadmates as Obstacles)"]
+        R3["Decoupled Payload Detonation\n(Observer Pattern / C# Event OnDetonated)"]
+        R4["Emissive Telemetry & Visual Banking\n(Cyan Stalk <-> Crimson Strike)"]
     end
 
-    A1 --> B1
-    A2 --> B1
-    A3 --> B1
-    B1 --> B2
-    B2 --> D1
-    D1 --> D2
-    D1 --> D3
+    S1 --> S2
+    S2 --> S3
+    S3 -->|Conditioning α| P1
+    P1 --> P2
+    P2 --> P3
+    P3 --> R1
+    R1 --> R2
+    R1 --> R3
+    R1 --> R4
+    R3 -.->|OnDetonated Callback| S1
 ```
 
 ---
 
-## Dual-Doctrine Behavioral Spectrum ($\alpha$)
+## Dual-Doctrine Behavioral Spectrum
 
-The policy is conditioned on a continuous runtime parameter $\alpha \in [0.0, 1.0]$:
+Each drone's neural policy is conditioned on a continuous runtime scalar parameter $\alpha \in [0.0, 1.0]$, dynamically interpolated by the Swarm Director:
 
-| Doctrine | Parametric Mode | Visual Telemetry | Target Behavior |
+| Tactical Doctrine | State Parameter | Emissive Telemetry | Physical Behavior |
 | :--- | :---: | :---: | :--- |
-| **Tactical Stalking** | $\alpha = 0.0$ | **Cyan** | Maintains an elevated perch envelope ($3\,\text{m}$ offset, $+2\,\text{m}$ elevation), circle-strafes, and evades target intrusions. |
-| **Parametric Blend** | $0 < \alpha < 1$ | **Interpolated** | Dynamic hybrid behavior; closes range while maintaining evasive lateral thruster readiness. |
-| **Kamikaze Strike** | $\alpha = 1.0$ | **Crimson** | High-velocity terminal dive-bomb ($12\,\text{m/s}$) with vertical plunge commitment and obstacle traversal. |
+| **Tactical Stalking / Overwatch** | $\alpha = 0.0$ | **Cyan** | Maintains an elevated standoff envelope ($3\,\text{m}$ radius, $+2\,\text{m}$ elevation), executes evasive circle-strafing, and holds player blind-spot sectors. |
+| **Parametric Blending** | $0.0 < \alpha < 1.0$ | **Interpolated** | Dynamic transition state; accelerates toward target while maintaining evasive lateral thruster responsiveness. |
+| **Kamikaze Strike** | $\alpha = 1.0$ | **Crimson** | High-velocity terminal plunge ($12\,\text{m/s}$) with vertical commitment, aggressive pillar evasion, and proximity/impact payload detonation. |
 
 ---
 
 ## Mathematical Formulation
 
-### 1. Multiplicative Planar Facing Gate ($G_{\text{face}}$)
-To permanently eliminate the "Moonwalk Trap" (where the agent earns rewards while flying backward) without penalizing steep downward dive angles, the forward vector is projected onto the horizontal $XZ$ plane:
+### 1. Swarm Director Tactical Priority Score ($S_{\text{tactical}}$)
+The Swarm Director determines which drone launches the next assault using an egocentric blind-spot dot product and obstacle raycast verification:
 
-$$\hat{\mathbf{r}}_{XZ} = \frac{\mathbf{r}_{XZ}}{\|\mathbf{r}_{XZ}\|}, \quad \text{rawDot}_{XZ} = \mathbf{f} \cdot \hat{\mathbf{r}}_{XZ}$$
+$$\hat{\mathbf{d}}_{\text{toDrone}} = \frac{\mathbf{x}_{\text{drone}} - \mathbf{x}_{\text{player}}}{\|\mathbf{x}_{\text{drone}} - \mathbf{x}_{\text{player}}\|}$$
+
+$$\text{FlankScore} = -\left( \mathbf{f}_{\text{player}} \cdot \hat{\mathbf{d}}_{\text{toDrone}} \right)$$
+
+$$\text{LOSScore} = \begin{cases} +2.0 & \text{if Raycast}(\mathbf{x}_{\text{drone}}, -\hat{\mathbf{d}}, d, \text{Obstacles}) == \text{False} \\ -5.0 & \text{if Raycast} == \text{True} \end{cases}$$
+
+$$S_{\text{tactical}} = (\text{FlankScore} \cdot w_{\text{blindspot}}) + \text{LOSScore} - (d \cdot w_{\text{dist}})$$
+
+* **Flank Advantage**: Drones in the player's rear blind spot ($\mathbf{f}_{\text{player}} \cdot \hat{\mathbf{d}} \to -1.0$) receive a $+1.0$ priority bonus. Drones directly in the player's field of view take a $-1.0$ penalty.
+* **Line of Sight**: Blocked trajectories through pillars apply a $-5.0$ penalty to prevent dive-bomb collisions into scene geometry.
+
+### 2. Multiplicative Planar Facing Gate ($G_{\text{face}}$)
+To permanently eliminate backward drift without penalizing steep downward attack vectors, the drone's forward vector is projected onto the horizontal $XZ$ plane:
+
+$$\hat{\mathbf{r}}_{XZ} = \frac{\mathbf{r}_{XZ}}{\|\mathbf{r}_{XZ}\|}, \quad \text{rawDot}_{XZ} = \mathbf{f}_{\text{drone}} \cdot \hat{\mathbf{r}}_{XZ}$$
 
 $$G_{\text{face}} = \begin{cases} (\text{rawDot}_{XZ})^2 & \text{if } \text{rawDot}_{XZ} > 0 \\ 0 & \text{otherwise} \end{cases}$$
 
-Every positive reward term is multiplied by $G_{\text{face}}$, forcing the policy to keep the target within its forward cone.
-
-### 2. Gaussian Perch Envelope ($R_{\text{perch}}$)
-In Stalk mode ($\alpha = 0$), the agent is rewarded for maintaining a 3D tactical holding ring:
+### 3. Gaussian Perch Envelope ($R_{\text{perch}}$)
+In Stalk mode ($\alpha = 0$), the agent is rewarded for holding an elevated standoff ring:
 
 $$R_{\text{perch}} = G_{\text{face}} \cdot \exp\left( -\frac{(d_{XZ} - 3.0)^2}{2 \cdot (1.2)^2} - \frac{(\Delta y - 2.0)^2}{2 \cdot (1.0)^2} \right)$$
 
-### 3. Personal-Space Breach & Quadratic Repulsion ($R_{\text{breach}}$)
-When the target breaches the $2.0\,\text{m}$ tactical perimeter ($d_{XZ} < 2.0\,\text{m}$):
-
-$$R_{\text{breach}} = -0.5 \left(\frac{2.0 - d_{XZ}}{2.0}\right)^2 + 0.6 \cdot G_{\text{face}} \cdot \text{clamp}\left(\frac{v_{\text{retreat}}}{v_{\text{max}}}, -1, 1\right)$$
-
-### 4. 3D Strike Dynamic Closing & Linear Urgency Bleed ($R_{\text{strike}}$)
-In Strike mode ($\alpha = 1$), static proximity rewards are removed to eliminate the **Loitering Trap**. The agent is rewarded strictly for closing velocity and downward vertical plunge:
+### 4. Dynamic Strike Velocity & Urgency Bleed ($R_{\text{strike}}$)
+In Strike mode ($\alpha = 1$), static loitering incentives are eliminated. Reward is governed strictly by closing velocity, vertical plunge, and an urgency decay:
 
 $$v_{\text{close}} = (\mathbf{v}_{\text{drone}} - \mathbf{v}_{\text{target}}) \cdot \hat{\mathbf{r}}, \quad v_{\text{dive}} = \text{sgn}(\Delta y) \cdot v_{y,\text{rel}}$$
 
 $$R_{\text{strike}} = G_{\text{face}} \left[ 0.8 \cdot \text{clamp}\left(\frac{v_{\text{close}}}{v_{\text{max}}}\right) + 0.4 \cdot \text{clamp}\left(\frac{v_{\text{dive}}}{v_{\text{max}}}\right) + R_{\text{magnet}} \right] - 0.35$$
 
-### 5. Composite Step Reward
-$$R_{\text{step}} = 0.01 \cdot \left[ (1 - \alpha) R_{\text{stalk}} + \alpha R_{\text{strike}} \right]$$
-
 ---
 
 ## Engineering Post-Mortem: Overcoming RL Failure Modes
 
-| # | Phenomenon Encountered | Root Mathematical / Physical Cause | Production Resolution |
+| # | Encountered Failure Mode | Root Mathematical / Physical Cause | Production Resolution |
 |---|---|---|---|
-| **1** | **The "War Horn" Temporal Shortcut** | Flipping $\alpha: 0 \to 1$ mid-episode allowed Bellman backups ($V(s_t)$) to bootstrap terminal strike payouts during Stalk mode, turning Stalk into a passive waiting room. | **Episode-Static Stratified $\alpha$-Sampling** (40% pure Stalk, 30% pure Strike, 30% $U(0,1)$) during training while preserving frame-by-frame slider conditioning at runtime. |
-| **2** | **Feature Collinearity (Floor Altimeter Shortcut)** | Fixed target elevation in early stages made floor distance (`obs[14]`) 100% collinear with target relative height at $4\times$ higher signal variance. | Clamped `obs[14]` to a **short-range floor-proximity warning** active only below $1.5\,\text{m}$ ($0.0$ in mid-air), forcing the MLP to wire heave ($a_2$) strictly to ego-relative target elevation. |
-| **3** | **The 1.48m Geometric Stall & Pitch Dilution** | A 3D dot product on a horizon-locked Rigidbody penalized steep downward dives by $\cos^2(\phi_{\text{pitch}})$, while passive proximity rewards created a zero-velocity hovering equilibrium. | Projected $G_{\text{face}}$ onto the horizontal $XZ$ plane, replaced passive proximity with **3D + vertical closing velocity**, and added a $-0.35$ urgency bleed. |
-| **4** | **The Collider Blockade (Physical Boundary Bug)** | Rigid physical contact occurred at $0.98\,\text{m}$ ($r_{\text{drone}} + r_{\text{target}}$), rendering the original $<0.80\,\text{m}$ strike condition physically unattainable without collider penetration. | Expanded terminal strike detonation threshold to $1.15\,\text{m}$, aligning reward verification with the continuous dynamic physics simulation. |
+| **1** | **The "War Horn" Shortcut** | Toggling $\alpha: 0 \to 1$ mid-episode allowed Bellman value backups ($V(s_t)$) to bootstrap terminal strike rewards into Stalk mode, converting Stalking into a passive waiting state. | **Episode-Static Stratified $\alpha$-Sampling** (40% pure Stalk, 30% pure Strike, 30% uniform random) during training, while preserving smooth frame-by-frame runtime slider blending. |
+| **2** | **Feature Collinearity (Altimeter Shortcut)** | Fixed target height across early curriculum phases made the downward altimeter (`obs[14]`) 100% collinear with target relative elevation, but at $4\times$ higher signal variance. | Clamped `obs[14]` to a **short-range ground warning** active only below $1.5\,\text{m}$ ($0.0$ at cruising height), forcing the network to correlate heave ($a_2$) strictly with target relative altitude. |
+| **3** | **1.48m Geometric Stall & Pitch Dilution** | A 3D dot product applied to a horizontal-constrained Rigidbody penalized downward dives by $\cos^2(\phi_{\text{pitch}})$, while passive proximity rewards created zero-velocity hovering equilibria. | Projected $G_{\text{face}}$ onto the $XZ$ plane, replaced proximity rewards with **3D + vertical closing velocity**, and added a $-0.35$ urgency bleed. |
+| **4** | **Multi-Agent Flocking Clumping** | Spawning multiple independent drones without coordination caused agents to cluster on identical pursuit trajectories and collide. | Tagged drone hulls as `Obstacle` to utilize their existing 38-whisker raycast nets for **emergent mutual separation**, governed by the C# Swarm Director. |
 
 ---
 
 ## Observation & Action Space Specification
 
-### Observation Vector (54 Floats)
+### Observation Tensor (54 Continuous Floats)
 - **`[0..2]`**: Egocentric target position (normalized $/ 20\,\text{m}$)
-- **`[3]`**: Normalized distance to target ($\| \mathbf{r} \| / 20\,\text{m}$)
-- **`[4..6]`**: Egocentric unit direction to target
-- **`[7..9]`**: Drone linear velocity in local space ($/ 12\,\text{m/s}$)
-- **`[10..12]`**: Target relative velocity in local space ($/ 12\,\text{m/s}$)
+- **`[3]`**: Normalized Euclidean distance to target ($\| \mathbf{r} \| / 20\,\text{m}$)
+- **`[4..6]`**: Egocentric unit direction vector to target
+- **`[7..9]`**: Drone linear velocity in local body coordinates ($/ 12\,\text{m/s}$)
+- **`[10..12]`**: Target relative linear velocity in local body coordinates ($/ 12\,\text{m/s}$)
 - **`[13]`**: Normalized yaw angular rate ($\omega_y / \omega_{\text{max}}$)
-- **`[14]`**: Short-range floor proximity warning ($\text{clamp01}((1.5 - d_{\text{floor}})/1.5)$)
-- **`[15]`**: Conditioned Aggression parameter ($\alpha$)
-- **`[16..53]`**: 38 RayPerceptionSensor3D inputs (Horizon 360°, Upper 45° Cone, Lower 45° Cone)
+- **`[14]`**: Short-range ground proximity warning ($\text{clamp01}((1.5 - d_{\text{floor}})/1.5)$)
+- **`[15]`**: Conditioned Aggression scalar parameter ($\alpha$)
+- **`[16..53]`**: 38 RayPerceptionSensor3D whiskers (360° Horizontal Plane, Upper 45° Cone, Lower 45° Cone)
 
-### Continuous Action Space (4 Continuous Floats)
-- **$a_0$ Surge**: Longitudinal thrust $[-1.0, 1.0]$ ($0.85\times$ reverse scale)
-- **$a_1$ Sway**: Lateral strafe thrust $[-1.0, 1.0]$
-- **$a_2$ Heave**: Vertical lift thrust $[-1.0, 1.0]$
-- **$a_3$ Yaw**: Rotational angular rate command $[-1.0, 1.0]$ (up to $380^\circ/\text{s}$)
+### Action Space (4 Continuous Actuators)
+- **$a_0$ Surge**: Longitudinal thrust command $[-1.0, 1.0]$ ($0.85\times$ reverse multiplier)
+- **$a_1$ Sway**: Lateral strafe thrust command $[-1.0, 1.0]$
+- **$a_2$ Heave**: Vertical lift thrust command $[-1.0, 1.0]$
+- **$a_3$ Yaw Rate**: Rotational rate command $[-1.0, 1.0]$ (up to $380^\circ/\text{s}$)
 
 ---
 
-## Quickstart & Inference in Unity Sentis
+## Quickstart & Sentis Deployment
 
-No Python environment or PyTorch installation is required to run the trained model in your scene.
+No Python environment, PyTorch installation, or CUDA toolkit is required to run the trained model.
 
-1. Clone this repository:
+1. Clone the repository:
    ```bash
    git clone https://github.com/jeepixd/GeistForge-Engine.git
    ```
 2. Open the project in **Unity 6 (6000.0+)**.
-3. Open either scene under `Assets/Drone/Scene/`:
-   - `Testing Area.unity`: Dedicated single-agent showcase arena.
-   - `TrainingArena.unity`: Parallel curriculum training environment.
-4. Select the `Drone` GameObject in the hierarchy:
-   - Verify `Behavior Parameters -> Model` is set to `KillerDrone_Stage3_CombatStress.onnx`.
-   - Set `Behavior Type` to `Inference Only`.
+3. Open `Assets/Drone/Scene/Testing Area.unity`.
+4. Inspect the `[SwarmDirector]` GameObject:
+   - Set **`Attack Mode`** to `0` for passive squad loitering / overwatch.
+   - Set **`Attack Mode`** to `1` to initiate tactical kamikaze strike rotations.
 5. Press **Play**:
-   - Adjust the **`Aggression`** slider on `KillerDroneAgent` in real time to observe dynamic doctrine switching between Cyan Stalk and Crimson Strike.
+   - The swarm coordinates dynamically in real time. Overwatch drones loiter in Cyan; the elected Striker turns Crimson and dives with obstacle evasion.
 
 ---
 
-## Tech Stack & Hardware
+## Tech Stack & Hardware Specifications
 
-- **Engine**: Unity 6000.0 LTS (Universal Render Pipeline)
-- **Inference Runtime**: Unity Sentis (ONNX Runtime)
+- **Simulation Engine**: Unity 6000.0 LTS (Universal Render Pipeline)
+- **Inference Runtime**: Unity Sentis (Zero-Python ONNX Runtime)
+- **Inference Latency**: Sub-0.1ms per agent on GPU/CPU
 - **Reinforcement Learning Framework**: Unity ML-Agents v0.30.0 / PyTorch 2.2
 - **Training Acceleration**: CUDA-accelerated PPO on NVIDIA GeForce RTX 4060 Laptop GPU
-- **Simulation Throughput**: $\approx 11.5\,\text{M}$ cumulative simulation steps across 4 curriculum phases
+- **Simulation Throughput**: $\approx 11.5\,\text{M}$ cumulative training steps across 4 curriculum phases
 
 ---
 
 ## License
-Distributed under the MIT License. See `LICENSE` for more information.
+
+Distributed under the MIT License. See `LICENSE` for complete details.
