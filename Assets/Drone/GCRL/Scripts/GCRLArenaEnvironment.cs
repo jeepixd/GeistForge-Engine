@@ -4,6 +4,7 @@ using Unity.MLAgents;
 /// <summary>
 /// GCRLArenaEnvironment: Manages the 24m Combat Box, pre-allocated obstacle pool,
 /// adjustable ceiling, and the 4-State Adversarial Target Bot driven by ML-Agents Curriculum Parameters.
+/// Handles Goal-Conditioning random sampling and mid-episode goal shifts.
 /// </summary>
 public class GCRLArenaEnvironment : MonoBehaviour
 {
@@ -26,6 +27,12 @@ public class GCRLArenaEnvironment : MonoBehaviour
     private bool _enableKnockback = false;
     private float _targetGoalY = 1.0f;
     private float _currentCeilingY = 9.0f;
+
+    // GCRL Goal Resampling State
+    private float _currentGoalDist = 3.0f;
+    private float _currentGoalHeight = 2.0f;
+    private float _resampleTimer = 7.0f;
+    private float _resampleChance = 0.5f;
 
     // Target Bot State Machine
     private enum BotState { Stationary, BullRush, Serpentine, PillarHug }
@@ -69,8 +76,28 @@ public class GCRLArenaEnvironment : MonoBehaviour
             ceilingTransform.localPosition = new Vector3(0f, ceilingY, 0f);
         }
 
-        // 3. Spawn Target in a clear location with true 3D elevation
-        float maxTargetSpawnY = Mathf.Max(1.5f, ceilingY - 3.2f); // Leaves 3.2m headroom for the +2m Stalk perch
+        // 3. Goal-Conditioning Sampling from Curriculum
+        float goalDistMin   = _envParams.GetWithDefault("goal_dist_min", 2.0f);
+        float goalDistMax   = _envParams.GetWithDefault("goal_dist_max", 12.0f);
+        float goalHeightMin = _envParams.GetWithDefault("goal_height_min", 0.5f);
+        float goalHeightMax = _envParams.GetWithDefault("goal_height_max", 6.0f);
+
+        _currentGoalDist = Random.Range(goalDistMin, goalDistMax);
+        _currentGoalHeight = Random.Range(goalHeightMin, goalHeightMax);
+
+        // Clamp goalHeight so target + standoff perch does not push drone into ceiling
+        _currentGoalHeight = Mathf.Min(_currentGoalHeight, _currentCeilingY - 2.0f);
+
+        if (droneAgent != null)
+        {
+            droneAgent.goalDist = _currentGoalDist;
+            droneAgent.goalHeight = _currentGoalHeight;
+        }
+        _resampleTimer = Random.Range(5.0f, 10.0f);
+
+        // 4. Spawn Target in a clear location with true 3D elevation
+        // Headroom accounts for variable goalHeight so the drone has room to perch above
+        float maxTargetSpawnY = Mathf.Max(1.5f, ceilingY - _currentGoalHeight - 1.2f);
         Vector3 targetLocalPos = new Vector3(
             Random.Range(-arenaHalfExtentXZ * 0.6f, arenaHalfExtentXZ * 0.6f),
             Random.Range(1.0f, maxTargetSpawnY),
@@ -85,7 +112,7 @@ public class GCRLArenaEnvironment : MonoBehaviour
         }
         _targetGoalY = targetLocalPos.y;
 
-        // 4. Spawn Drone 2m to 9m away at random elevation and yaw
+        // 5. Spawn Drone 2m to 9m away at random elevation and yaw
         Vector2 randCircle = Random.insideUnitCircle.normalized * Random.Range(2.0f, 9.0f);
         Vector3 droneLocalPos = new Vector3(
             Mathf.Clamp(targetLocalPos.x + randCircle.x, -arenaHalfExtentXZ, arenaHalfExtentXZ),
@@ -99,7 +126,7 @@ public class GCRLArenaEnvironment : MonoBehaviour
             droneAgent.transform.localRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
         }
 
-        // 5. Randomize Pre-Allocated Obstacles (Ensuring 2.5m Clearance from Spawns)
+        // 6. Randomize Pre-Allocated Obstacles (Ensuring 2.5m Clearance from Spawns)
         if (pillarPool != null && pillarPool.Length > 0)
         {
             RandomizeObstacles(pillarPool, _activePillars, targetLocalPos, droneLocalPos, false, ceilingY);
@@ -166,6 +193,41 @@ public class GCRLArenaEnvironment : MonoBehaviour
     {
         UpdateTargetBot();
 
+        // Stage 2+ GCRL: Mid-Episode Goal Resampling (Step-Response Training)
+        float enableResample = _envParams != null ? _envParams.GetWithDefault("enable_goal_resample", 0f) : 0f;
+        if (enableResample > 0.5f && droneAgent != null)
+        {
+            _resampleTimer -= Time.fixedDeltaTime;
+            if (_resampleTimer <= 0f)
+            {
+                _resampleTimer = Random.Range(5.0f, 10.0f);
+                if (Random.value < _resampleChance)
+                {
+                    float goalDistMin   = _envParams.GetWithDefault("goal_dist_min", 2.0f);
+                    float goalDistMax   = _envParams.GetWithDefault("goal_dist_max", 12.0f);
+                    float goalHeightMin = _envParams.GetWithDefault("goal_height_min", 0.5f);
+                    float goalHeightMax = _envParams.GetWithDefault("goal_height_max", 6.0f);
+
+                    // Smooth transition: shift by at most 40% of the total range per shift
+                    float maxDistShift   = (goalDistMax - goalDistMin) * 0.4f;
+                    float maxHeightShift = (goalHeightMax - goalHeightMin) * 0.4f;
+
+                    _currentGoalDist = Mathf.Clamp(
+                        _currentGoalDist + Random.Range(-maxDistShift, maxDistShift),
+                        goalDistMin, goalDistMax
+                    );
+                    _currentGoalHeight = Mathf.Clamp(
+                        _currentGoalHeight + Random.Range(-maxHeightShift, maxHeightShift),
+                        goalHeightMin,
+                        Mathf.Min(goalHeightMax, _currentCeilingY - 2.0f)
+                    );
+
+                    droneAgent.goalDist   = _currentGoalDist;
+                    droneAgent.goalHeight = _currentGoalHeight;
+                }
+            }
+        }
+
         // Stage 3 Domain Randomization: Occasional Velocity Impulse (Weapon Knockback / Wind)
         if (_enableKnockback && droneAgent != null && Random.value < 0.008f)
         {
@@ -223,7 +285,7 @@ public class GCRLArenaEnvironment : MonoBehaviour
                 break;
 
             case BotState.BullRush:
-                // Charge directly under the drone to breach its < 2.0m personal space!
+                // Charge directly under the drone to breach its personal space!
                 Vector3 toDroneXZ = droneAgent.transform.localPosition - targetRb.transform.localPosition;
                 toDroneXZ.y = 0f;
                 desiredVel = toDroneXZ.normalized * speed;
