@@ -24,6 +24,22 @@ public class GCRLDroneAgent : Agent
     public float maxYawRateDeg = 380f;
     public float maxSensorRange = 20f;
 
+    //goal and cache variables 
+    [Header("Goal Conditioning")]
+    [HideInInspector] public float goalDist = 3.0f;
+    [HideInInspector] public float goalHeight = 2.0f;
+
+    public float minGoalDist = 2.0f;
+    public float minGoalHeight = 0.5f;
+    public float maxGoalDist = 12.0f;
+    public float maxGoalHeight = 6.0f;
+
+    //cached geometric state 
+    private float _cachedDXZ;
+    private float _cachedDeltaY;
+    private float _cachedGroundDist = 10f;
+
+
     // cosmetics banking
     public Transform visualModel;
     public float maxBankAngle = 22f;
