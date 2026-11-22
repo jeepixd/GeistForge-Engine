@@ -233,8 +233,14 @@ public class GCRLDroneAgent : Agent
 
         float rUrgency = -0.35f;
         float rStrike = facingGate * (rClose + rMagnet) + rUrgency;
+        // 5. Continuous Proximity Clearance (Ground Warning)
+        float rProximity = (_cachedGroundDist < 1.0f) ? (-0.2f * (1.0f - _cachedGroundDist)) : 0f;
 
-        float stepReward = 0.01f * ((1f - aggression) * rStalk + aggression * rStrike);
+        // 6. Action Smoothness Regularization (Penalize excessive erratic yaw jerk)
+        float yawJerk = Mathf.Abs(_rb.angularVelocity.y);
+        float rSmooth = -0.005f * Mathf.Clamp01(yawJerk / (maxYawRateDeg * Mathf.Deg2Rad));
+
+        float stepReward = 0.01f * ((1f - aggression) * (rStalk + rProximity + rSmooth) + aggression * (rStrike + rProximity));
         AddReward(stepReward);
 
         if (dist3D < 1.15f)
