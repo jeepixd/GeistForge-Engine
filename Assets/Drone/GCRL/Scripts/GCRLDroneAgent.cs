@@ -99,6 +99,8 @@ public class GCRLDroneAgent : Agent
         sensor.AddObservation(normalizedPosition); // 3 floats x y z
 
         Vector3 toTarget = target.position - transform.position;
+        _cachedDXZ = new Vector2(toTarget.x, toTarget.z).magnitude;
+        _cachedDeltaY = transform.position.y - target.position.y;
         float normalizedDistance = Mathf.Clamp01(toTarget.magnitude / maxSensorRange);
         sensor.AddObservation(normalizedDistance); // 1 float
 
@@ -124,10 +126,8 @@ public class GCRLDroneAgent : Agent
         float normalizedYawRate = Mathf.Clamp(_rb.angularVelocity.y / maxYawRateRad, -1f, 1f);
         sensor.AddObservation(normalizedYawRate); // 1 float
 
-        // Observation 15: Short-range ground warning (< 1.5m). Above 1.5m it outputs 0.0!
-        float groundDist = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 10f, obstacleMask)
-            ? hit.distance : 10f;
-        sensor.AddObservation(Mathf.Clamp01((1.5f - groundDist) / 1.5f)); // 1 float
+        _cachedGroundDist = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 10f, obstacleMask) ? hit.distance : 10f;
+        sensor.AddObservation(Mathf.Clamp01((1.5f - _cachedGroundDist) / 1.5f)); //1 float 
         sensor.AddObservation(Mathf.Clamp01(aggression)); // 1 float
     }
 
