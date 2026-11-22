@@ -129,6 +129,18 @@ public class GCRLDroneAgent : Agent
         _cachedGroundDist = Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 10f, obstacleMask) ? hit.distance : 10f;
         sensor.AddObservation(Mathf.Clamp01((1.5f - _cachedGroundDist) / 1.5f)); //1 float 
         sensor.AddObservation(Mathf.Clamp01(aggression)); // 1 float
+
+        //gcrl observation 
+        //normalized vdist in[0,1]
+        sensor.AddObservation(Mathf.InverseLerp(minGoalDist, maxGoalDist, goalDist));
+        //normalized vheight in [0,1]
+        sensor.AddObservation(Mathf.InverseLerp(minGoalHeight, maxGoalHeight, goalHeight));
+        //signed normalized planar dist error
+        float distError = (_cachedDXZ - goalDist) / maxGoalDist;
+        sensor.AddObservation(Mathf.Clamp(distError, -1f, 1f));
+        //signed normalized elevation error 
+        float heightError = (_cachedDeltaY - goalHeight) / maxGoalHeight;
+        sensor.AddObservation(Mathf.Clamp(heightError, -1f, 1f));
     }
 
     public override void OnActionReceived(ActionBuffers actions)
