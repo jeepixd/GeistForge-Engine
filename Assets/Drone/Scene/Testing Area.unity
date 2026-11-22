@@ -151,7 +151,7 @@ MonoBehaviour:
   attackMode: 0
   playerTarget: {fileID: 1458815355}
   drones:
-  - {fileID: 636387561}
+  - {fileID: 0}
   - {fileID: 1557326615}
   - {fileID: 324591721}
   strikeDuration: 4
@@ -271,6 +271,10 @@ PrefabInstance:
       value: Drone (1)
       objectReference: {fileID: 0}
     - target: {fileID: 8878543062731911945, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8878543062731911945, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
       propertyPath: m_TagString
       value: Obstacle
       objectReference: {fileID: 0}
@@ -336,7 +340,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 401495263}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 324591720}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5361c89ef5f113540b40d82fcb5d380f, type: 3}
   m_Name: 
@@ -355,6 +359,47 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DroneDetonator
   explosionVfxPrefab: {fileID: 1828176872806910, guid: 64891a0eb28db934898420d80ca07cb3, type: 3}
   detonationRadius: 1.25
+--- !u!114 &324591725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 324591720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 551740d730efc844195f24cb4260d2ce, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GCRLDroneAgent
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 0
+  aggression: 0
+  target: {fileID: 1458815355}
+  targetRb: {fileID: 1458815351}
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 1
+  arena: {fileID: 0}
+  maxSpeed: 20
+  surgeAccel: 70
+  swayAccel: 45
+  heaveAccel: 35
+  maxYawRateDeg: 450
+  maxSensorRange: 30
+  goalDist: 3
+  goalHeight: 2
+  minGoalDist: 2
+  minGoalHeight: 0.5
+  maxGoalDist: 12
+  maxGoalHeight: 6
+  visualModel: {fileID: 0}
+  maxBankAngle: 22
+  randomDraw: 0
+  droneMeshRenderer: {fileID: 0}
+  stalkEyeColor: {r: 0, g: 2.5, b: 4, a: 1}
+  strikeEyeColor: {r: 5, g: 0.2, b: 0.1, a: 1}
 --- !u!1 &379817004
 GameObject:
   m_ObjectHideFlags: 0
@@ -515,6 +560,10 @@ PrefabInstance:
       propertyPath: targetRb
       value: 
       objectReference: {fileID: 1458815351}
+    - target: {fileID: 6896838111613846713, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8126469200000394436, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
       propertyPath: m_LocalPosition.x
       value: -25.46
@@ -560,6 +609,10 @@ PrefabInstance:
       value: Drone (2)
       objectReference: {fileID: 0}
     - target: {fileID: 8878543062731911945, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8878543062731911945, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
       propertyPath: m_TagString
       value: Obstacle
       objectReference: {fileID: 0}
@@ -570,6 +623,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8878543062731911945, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
       insertIndex: -1
       addedObject: {fileID: 324591723}
+    - targetCorrespondingSourceObject: {fileID: 8878543062731911945, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 324591725}
   m_SourcePrefab: {fileID: 100100000, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
 --- !u!1 &452668752
 GameObject:
@@ -1091,17 +1147,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8878543062731911945, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
   m_PrefabInstance: {fileID: 2055135641}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &636387561 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6896838111613846713, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
-  m_PrefabInstance: {fileID: 2055135641}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 636387560}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5361c89ef5f113540b40d82fcb5d380f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::KillerDroneAgent
 --- !u!114 &636387563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1111,11 +1156,38 @@ MonoBehaviour:
   m_GameObject: {fileID: 636387560}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36ed3bedb64765c49b7aec01f825c95a, type: 3}
+  m_Script: {fileID: 11500000, guid: 551740d730efc844195f24cb4260d2ce, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DroneDetonator
-  explosionVfxPrefab: {fileID: 1828176872806910, guid: 64891a0eb28db934898420d80ca07cb3, type: 3}
-  detonationRadius: 1.25
+  m_EditorClassIdentifier: Assembly-CSharp::GCRLDroneAgent
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 0
+  aggression: 0
+  target: {fileID: 1458815355}
+  targetRb: {fileID: 1458815351}
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 1
+  arena: {fileID: 0}
+  maxSpeed: 20
+  surgeAccel: 70
+  swayAccel: 45
+  heaveAccel: 35
+  maxYawRateDeg: 450
+  maxSensorRange: 30
+  goalDist: 3
+  goalHeight: 2
+  minGoalDist: 2
+  minGoalHeight: 0.5
+  maxGoalDist: 12
+  maxGoalHeight: 6
+  visualModel: {fileID: 1943715200}
+  maxBankAngle: 22
+  randomDraw: 0
+  droneMeshRenderer: {fileID: 1775224862}
+  stalkEyeColor: {r: 0, g: 2.5, b: 4, a: 1}
+  strikeEyeColor: {r: 5, g: 0.2, b: 0.1, a: 1}
 --- !u!1 &639750304
 GameObject:
   m_ObjectHideFlags: 0
@@ -3122,6 +3194,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1702097139}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &1775224862 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2439190505178902688, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
+  m_PrefabInstance: {fileID: 2055135641}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1791800051
 GameObject:
   m_ObjectHideFlags: 0
@@ -3834,6 +3911,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1908655850}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1943715200 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4303652015362001146, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
+  m_PrefabInstance: {fileID: 2055135641}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2037941293
 GameObject:
   m_ObjectHideFlags: 0
@@ -3959,7 +4041,15 @@ PrefabInstance:
     - target: {fileID: 5424647226295204086, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
       propertyPath: m_Model
       value: 
-      objectReference: {fileID: 5022602860645237092, guid: a19c1260d04d4dc4a8d342a84a5ec9db, type: 3}
+      objectReference: {fileID: 5022602860645237092, guid: 148b8a0212a3cfd498f9f57018c15a5c, type: 3}
+    - target: {fileID: 5424647226295204086, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
+      propertyPath: m_BrainParameters.VectorObservationSize
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424647226295204086, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
+      propertyPath: m_BrainParameters.NumStackedVectorObservations
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 6773370364680959965, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0.00000049173826
@@ -4044,7 +4134,8 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Obstacle
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6896838111613846713, guid: 8f1a46b2de56ee945aad970c2fed9885, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:

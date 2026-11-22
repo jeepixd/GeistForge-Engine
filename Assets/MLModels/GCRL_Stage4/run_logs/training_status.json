@@ -1,0 +1,140 @@
+{
+    "goal_dist_min": {
+        "lesson_num": 3
+    },
+    "goal_dist_max": {
+        "lesson_num": 3
+    },
+    "goal_height_min": {
+        "lesson_num": 3
+    },
+    "goal_height_max": {
+        "lesson_num": 3
+    },
+    "enable_goal_resample": {
+        "lesson_num": 3
+    },
+    "target_speed_mult": {
+        "lesson_num": 3
+    },
+    "obstacle_pillars": {
+        "lesson_num": 3
+    },
+    "obstacle_beams": {
+        "lesson_num": 3
+    },
+    "min_ceiling_height": {
+        "lesson_num": 3
+    },
+    "enable_knockback": {
+        "lesson_num": 3
+    },
+    "KillerDrone": {
+        "checkpoints": [
+            {
+                "steps": 5999884,
+                "file_path": "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-5999884.onnx",
+                "reward": null,
+                "creation_time": 1795355887.4162252,
+                "auxillary_file_paths": [
+                    "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-5999884.pt"
+                ]
+            },
+            {
+                "steps": 6499884,
+                "file_path": "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-6499884.onnx",
+                "reward": 23.234268603225548,
+                "creation_time": 1795356617.94541,
+                "auxillary_file_paths": [
+                    "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-6499884.pt"
+                ]
+            },
+            {
+                "steps": 6999907,
+                "file_path": "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-6999907.onnx",
+                "reward": 21.17234033625573,
+                "creation_time": 1795357351.1987684,
+                "auxillary_file_paths": [
+                    "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-6999907.pt"
+                ]
+            },
+            {
+                "steps": 7499926,
+                "file_path": "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-7499926.onnx",
+                "reward": null,
+                "creation_time": 1795358099.9281833,
+                "auxillary_file_paths": [
+                    "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-7499926.pt"
+                ]
+            },
+            {
+                "steps": 7999978,
+                "file_path": "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-7999978.onnx",
+                "reward": 20.24434067378752,
+                "creation_time": 1795358842.2228725,
+                "auxillary_file_paths": [
+                    "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-7999978.pt"
+                ]
+            },
+            {
+                "steps": 8499934,
+                "file_path": "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-8499934.onnx",
+                "reward": 14.000332334311679,
+                "creation_time": 1795359576.6107776,
+                "auxillary_file_paths": [
+                    "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-8499934.pt"
+                ]
+            },
+            {
+                "steps": 8999947,
+                "file_path": "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-8999947.onnx",
+                "reward": null,
+                "creation_time": 1795360310.9560754,
+                "auxillary_file_paths": [
+                    "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-8999947.pt"
+                ]
+            },
+            {
+                "steps": 9499989,
+                "file_path": "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-9499989.onnx",
+                "reward": 35.258271007643394,
+                "creation_time": 1795361041.1165729,
+                "auxillary_file_paths": [
+                    "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-9499989.pt"
+                ]
+            },
+            {
+                "steps": 9999939,
+                "file_path": "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-9999939.onnx",
+                "reward": 9.399990305925408,
+                "creation_time": 1795361773.5737407,
+                "auxillary_file_paths": [
+                    "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-9999939.pt"
+                ]
+            },
+            {
+                "steps": 10000067,
+                "file_path": "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-10000067.onnx",
+                "reward": 9.399990305925408,
+                "creation_time": 1795361773.6655378,
+                "auxillary_file_paths": [
+                    "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-10000067.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 10000067,
+            "file_path": "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone.onnx",
+            "reward": 9.399990305925408,
+            "creation_time": 1795361773.6655378,
+            "auxillary_file_paths": [
+                "C:\\Users\\USER\\Unity_Games\\Ai_brain_test\\Assets\\MLModels\\GCRL_Stage4\\KillerDrone\\KillerDrone-10000067.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.30.0",
+        "torch_version": "2.5.1+cu121"
+    }
+}
