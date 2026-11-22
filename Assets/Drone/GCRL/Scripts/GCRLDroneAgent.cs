@@ -188,24 +188,38 @@ public class GCRLDroneAgent : Agent
         float closingSpeed = Vector3.Dot(_rb.linearVelocity - targetVel, dirToTarget);
         float retreatSpeed = -Vector3.Dot(_rb.linearVelocity, dirToTarget);
 
-        // stalk mode
-        float perchExponent = -((dXZ - 3.0f) * (dXZ - 3.0f)) / (2f * 1.44f)
-                      - ((deltaY - 2.0f) * (deltaY - 2.0f)) / (2f * 1.0f);
+        // --- STALK MODE (GOAL-CONDITIONED) ---
+        // 1. Adaptive Sigmas: Tighter precision at 2m, slightly wider margin at 12m
+        float normDist = Mathf.InverseLerp(minGoalDist, maxGoalDist, goalDist);
+        float sigmaD = Mathf.Lerp(0.8f, 1.8f, normDist);
+        float normHeight = Mathf.InverseLerp(minGoalHeight, maxGoalHeight, goalHeight);
+        float sigmaH = Mathf.Lerp(0.7f, 1.4f, normHeight);
+
+        // Dynamic 3D Gaussian Perch
+        float perchExponent = -((dXZ - goalDist) * (dXZ - goalDist)) / (2f * sigmaD * sigmaD)
+                              - ((deltaY - goalHeight) * (deltaY - goalHeight)) / (2f * sigmaH * sigmaH);
         float rPerch = facingGate * Mathf.Exp(perchExponent);
 
-        float rApproach = dXZ > 5.0f ? (0.2f * facingGate * Mathf.Clamp(closingSpeed / maxSpeed, -1f, 1f)) : 0f;
+        // 2. Dynamic Approach: Triggers when further than 1.4x beyond the goal ring
+        float approachThreshold = goalDist * 1.4f;
+        float rApproach = dXZ > approachThreshold ? (0.2f * facingGate * Mathf.Clamp(closingSpeed / maxSpeed, -1f, 1f)) : 0f;
+
+        // 3. Dynamic Breach Buffer: Proportional to goalDist (65% of goalDist, clamped [0.8m, 2.5m])
+        float breachRadius = Mathf.Clamp(goalDist * 0.65f, 0.8f, 2.5f);
         float rBreach = 0f;
-        if (dXZ < 2.0f)
+        if (dXZ < breachRadius)
         {
-            float intrusionRatio = (2.0f - dXZ) / 2.0f;
+            float intrusionRatio = (breachRadius - dXZ) / breachRadius;
             float penalty = -0.5f * (intrusionRatio * intrusionRatio); // Quadratic repulsion
             float backpedalBonus = 0.6f * facingGate * Mathf.Clamp(retreatSpeed / maxSpeed, -1f, 1f);
             rBreach = penalty + backpedalBonus;
         }
 
-        // tactical circle strafe bonus
+        // 4. Dynamic Circle Strafe Band: Centered on goalDist (+- 0.7m)
         float strafeSpeed = Mathf.Abs(Vector3.Dot(_rb.linearVelocity, transform.right));
-        float rStrafe = (dXZ >= 2.2f && dXZ <= 3.8f) ? (0.15f * facingGate * Mathf.Clamp01(strafeSpeed / maxSpeed)) : 0f;
+        float strafeMin = Mathf.Max(0.5f, goalDist - 0.7f);
+        float strafeMax = goalDist + 0.7f;
+        float rStrafe = (dXZ >= strafeMin && dXZ <= strafeMax) ? (0.15f * facingGate * Mathf.Clamp01(strafeSpeed / maxSpeed)) : 0f;
 
         float rStalk = rPerch + rApproach + rBreach + rStrafe;
 
