@@ -16,8 +16,8 @@ public class GCRLArenaEnvironment : MonoBehaviour
     public Transform[] floatingBeamPool; // 4 Horizontal Overhangs
 
     [Header("Arena Bounds (Local)")]
-    public float arenaHalfExtentXZ = 10.5f;
-    public float maxTargetSpeed = 9.0f;
+    public float arenaHalfExtentXZ = 18.0f;
+    public float maxTargetSpeed = 12.0f;
 
     // Curriculum Parameters fetched from ML-Agents YAML
     private EnvironmentParameters _envParams;
@@ -68,8 +68,8 @@ public class GCRLArenaEnvironment : MonoBehaviour
         float minCeiling = _envParams.GetWithDefault("min_ceiling_height", 6.0f);
         _enableKnockback = _envParams.GetWithDefault("enable_knockback", 0f) > 0.5f;
 
-        // 2. Randomize Ceiling Height
-        float ceilingY = Random.Range(minCeiling, 10.0f);
+        // 2. Randomize Ceiling Height (Expanded to 16m for high-elevation perches)
+        float ceilingY = Random.Range(minCeiling, 16.0f);
         _currentCeilingY = ceilingY;
         if (ceilingTransform != null)
         {

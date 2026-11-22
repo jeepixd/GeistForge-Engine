@@ -16,13 +16,13 @@ public class GCRLDroneAgent : Agent
 
     public GCRLArenaEnvironment arena;
 
-    // flight kinematics tuning
-    public float maxSpeed = 12f;
-    public float surgeAccel = 45f;
-    public float swayAccel = 30f;
-    public float heaveAccel = 25f;
-    public float maxYawRateDeg = 380f;
-    public float maxSensorRange = 20f;
+    // flight kinematics tuning (Upgraded High-Speed Combat Kinematics)
+    public float maxSpeed = 20f;
+    public float surgeAccel = 70f;
+    public float swayAccel = 45f;
+    public float heaveAccel = 35f;
+    public float maxYawRateDeg = 450f;
+    public float maxSensorRange = 30f;
 
     //goal and cache variables 
     [Header("Goal Conditioning")]
