@@ -237,7 +237,7 @@ environment_parameters:
           min_lesson_length: 200
           threshold: 0.3
           require_reset: true
-        value: 2.0
+        value: 4.0
       - name: Stage2_DynamicTracking
         completion_criteria:
           measure: reward
@@ -245,7 +245,7 @@ environment_parameters:
           min_lesson_length: 200
           threshold: 0.5
           require_reset: true
-        value: 4.0
+        value: 8.0
       - name: Stage3_DenseClutter
         completion_criteria:
           measure: reward
@@ -253,9 +253,9 @@ environment_parameters:
           min_lesson_length: 200
           threshold: 0.6
           require_reset: true
-        value: 7.0
+        value: 15.0
       - name: Stage4_AdversarialCombat
-        value: 8.0
+        value: 20.0
 
   # ── Obstacle Floating Beams ──
   obstacle_beams:
@@ -267,7 +267,7 @@ environment_parameters:
           min_lesson_length: 200
           threshold: 0.3
           require_reset: true
-        value: 0.0
+        value: 1.0
       - name: Stage2_DynamicTracking
         completion_criteria:
           measure: reward
@@ -275,7 +275,7 @@ environment_parameters:
           min_lesson_length: 200
           threshold: 0.5
           require_reset: true
-        value: 1.0
+        value: 3.0
       - name: Stage3_DenseClutter
         completion_criteria:
           measure: reward
@@ -283,9 +283,9 @@ environment_parameters:
           min_lesson_length: 200
           threshold: 0.6
           require_reset: true
-        value: 3.0
+        value: 6.0
       - name: Stage4_AdversarialCombat
-        value: 4.0
+        value: 8.0
 
   # ── Minimum Ceiling Height ──
   min_ceiling_height:
@@ -348,7 +348,7 @@ environment_parameters:
         value: 1.0
 
 checkpoint_settings:
-  run_id: GCRL_Stage4
+  run_id: GCRL_Run2
   initialize_from: null
   load_model: false
   resume: false

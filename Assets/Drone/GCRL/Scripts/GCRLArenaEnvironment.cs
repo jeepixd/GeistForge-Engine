@@ -17,7 +17,7 @@ public class GCRLArenaEnvironment : MonoBehaviour
 
     [Header("Arena Bounds (Local)")]
     public float arenaHalfExtentXZ = 18.0f;
-    public float maxTargetSpeed = 12.0f;
+    public float maxTargetSpeed = 8.5f;
 
     // Curriculum Parameters fetched from ML-Agents YAML
     private EnvironmentParameters _envParams;
@@ -90,8 +90,16 @@ public class GCRLArenaEnvironment : MonoBehaviour
 
         if (droneAgent != null)
         {
-            droneAgent.goalDist = _currentGoalDist;
-            droneAgent.goalHeight = _currentGoalHeight;
+            if (!droneAgent.manualDebugControl)
+            {
+                droneAgent.goalDist = _currentGoalDist;
+                droneAgent.goalHeight = _currentGoalHeight;
+            }
+            else
+            {
+                _currentGoalDist = droneAgent.goalDist;
+                _currentGoalHeight = droneAgent.goalHeight;
+            }
         }
         _resampleTimer = Random.Range(5.0f, 10.0f);
 
@@ -195,7 +203,7 @@ public class GCRLArenaEnvironment : MonoBehaviour
 
         // Stage 2+ GCRL: Mid-Episode Goal Resampling (Step-Response Training)
         float enableResample = _envParams != null ? _envParams.GetWithDefault("enable_goal_resample", 0f) : 0f;
-        if (enableResample > 0.5f && droneAgent != null)
+        if (enableResample > 0.5f && droneAgent != null && !droneAgent.manualDebugControl)
         {
             _resampleTimer -= Time.fixedDeltaTime;
             if (_resampleTimer <= 0f)

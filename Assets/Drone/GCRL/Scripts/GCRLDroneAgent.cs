@@ -16,18 +16,20 @@ public class GCRLDroneAgent : Agent
 
     public GCRLArenaEnvironment arena;
 
-    // flight kinematics tuning (Upgraded High-Speed Combat Kinematics)
-    public float maxSpeed = 20f;
-    public float surgeAccel = 70f;
-    public float swayAccel = 45f;
-    public float heaveAccel = 35f;
-    public float maxYawRateDeg = 450f;
-    public float maxSensorRange = 30f;
+    // flight kinematics tuning (Stable Combat Kinematics)
+    public float maxSpeed = 13.0f;
+    public float surgeAccel = 45.0f;
+    public float swayAccel = 30.0f;
+    public float heaveAccel = 25.0f;
+    public float maxYawRateDeg = 380.0f;
+    public float maxSensorRange = 25.0f;
 
-    //goal and cache variables 
-    [Header("Goal Conditioning")]
-    [HideInInspector] public float goalDist = 3.0f;
-    [HideInInspector] public float goalHeight = 2.0f;
+    // GCRL Goal Controls (Exposed for runtime testing)
+    [Header("GCRL Interactive Testing")]
+    [Tooltip("Check this in Play Mode to control distance, height, and aggression manually via Inspector sliders without the Arena overriding them.")]
+    public bool manualDebugControl = false;
+    [Range(1.5f, 12.0f)] public float goalDist = 3.0f;
+    [Range(0.5f, 6.0f)] public float goalHeight = 2.0f;
 
     public float minGoalDist = 2.0f;
     public float minGoalHeight = 0.5f;
@@ -73,7 +75,7 @@ public class GCRLDroneAgent : Agent
         _rb.linearVelocity = Vector3.zero;
         _rb.angularVelocity = Vector3.zero;
 
-        if (Academy.Instance.IsCommunicatorOn)
+        if (!manualDebugControl && Academy.Instance.IsCommunicatorOn)
         {
             randomDraw = Random.value;
             if (randomDraw < 0.4f)
