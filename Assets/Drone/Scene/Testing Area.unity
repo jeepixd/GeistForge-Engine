@@ -388,6 +388,7 @@ MonoBehaviour:
   heaveAccel: 35
   maxYawRateDeg: 450
   maxSensorRange: 30
+  manualDebugControl: 0
   goalDist: 3
   goalHeight: 2
   minGoalDist: 2
@@ -1176,6 +1177,7 @@ MonoBehaviour:
   heaveAccel: 35
   maxYawRateDeg: 450
   maxSensorRange: 30
+  manualDebugControl: 1
   goalDist: 3
   goalHeight: 2
   minGoalDist: 2

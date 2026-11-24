@@ -348,7 +348,7 @@ environment_parameters:
         value: 1.0
 
 checkpoint_settings:
-  run_id: GCRL_Run2
+  run_id: stage_4_retry
   initialize_from: null
   load_model: false
   resume: false
