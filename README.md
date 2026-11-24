@@ -5,7 +5,7 @@
 [![Inference Engine](https://img.shields.io/badge/Runtime-Unity%20Sentis%20(ONNX)-green.svg)](https://unity.com/products/sentis)
 [![Tactical Architecture](https://img.shields.io/badge/Architecture-Two--Tier%20Swarm%20Director-darkblue.svg)]()
 [![Action Space](https://img.shields.io/badge/Action%20Space-Continuous%206--DoF-red.svg)]()
-[![License](https://img.shields.io/badge/License-MIT-purple.svg)]()
+[![License](https://img.shields.io/badge/License-PolyForm%20Noncommercial-red.svg)](LICENSE)
 
 ![GeistForge Autonomous Flight Demo](media/demo.gif)
 
@@ -171,6 +171,15 @@ No Python environment, PyTorch installation, or CUDA toolkit is required to run 
 
 ---
 
-## License
+## License & Commercial Inquiries
 
-Distributed under the MIT License. See `LICENSE` for complete details.
+This project is licensed under the **PolyForm Noncommercial License 1.0.0**. See [`LICENSE`](LICENSE) for complete legal terms.
+
+- **Noncommercial Use**: Free for personal, educational, and academic research purposes.
+- **Commercial Use**: Incorporating this software, architecture, or model weights into commercial video games, proprietary defense/military simulations, or robotics products is **strictly prohibited** without an explicit commercial license agreement.
+
+### Commercial Licensing & Consulting
+To acquire a commercial license, commission custom swarm architectures, or hire AI engineering consulting:
+- **Lead Developer**: Jeevsan Shrestha
+- **GitHub**: [github.com/jeepixd](https://github.com/jeepixd)
+- **Direct Inquiries**: Available for high-end AI consulting, defense simulation contracts, and studio integrations.

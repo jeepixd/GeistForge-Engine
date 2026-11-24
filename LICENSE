@@ -1,21 +1,48 @@
-MIT License
+PolyForm Noncommercial License 1.0.0
 
-Copyright (c) 2026 Jeevsan Shrestha
+Copyright (c) 2026 Jeevsan Shrestha. All Rights Reserved.
+<https://polyformproject.org/licenses/noncommercial/1.0.0>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+## Purpose
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+This license allows you to use the software for noncommercial purposes only.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+## Agreement
+
+In order to receive this license, you have to agree to its rules. The rules of this license are both obligations under that agreement and conditions to your license. You must not do anything with this software that triggers a rule that you cannot or will not follow.
+
+## Notices
+
+You must ensure that everyone who gets a copy of any part of this software from you, with or without changes, also receives the copyright notice and the text of this license (and for any changes, also receives a notice that you made those changes).
+
+## Noncommercial Use
+
+You may only use this software for noncommercial purposes.
+
+A noncommercial purpose is a purpose that is not primarily intended for or directed towards commercial advantage or monetary compensation.
+
+Examples of noncommercial purposes include personal use, educational use, and noncommercial academic research.
+
+## Commercial Inquiries & Licensing
+
+Commercial use of this software, including incorporation into commercial video games, proprietary defense/military simulations, or robotics products, is strictly prohibited under this license.
+
+To obtain a commercial license, consulting agreement, or integration contract, contact the author directly:
+- Jeevsan Shrestha
+- GitHub: https://github.com/jeepixd
+
+## Fair Use
+
+You may have rights under the law, including fair use, that are not affected by this license.
+
+## No Other Rights
+
+These terms do not grant you any other rights, including rights to patents, trademarks, or trade names.
+
+## Defense Against Infringement Claims
+
+If you make a claim that this software infringes a patent, trademark, or copyright, your license to this software ends immediately.
+
+## Disclaimer of Warranties and Liability
+
+This software is provided as is, without any warranties or conditions. The copyright holder is not liable for any damages that arise from using this software.
