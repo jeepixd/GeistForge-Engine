@@ -2,7 +2,7 @@ using UnityEngine;
 using Unity.MLAgents;
 
 /// <summary>
-/// GCRLArenaEnvironment: Manages the 24m Combat Box, pre-allocated obstacle pool,
+/// GCRLArenaEnvironment: Manages the 36m x 36m x 16m Combat Box, pre-allocated obstacle pool,
 /// adjustable ceiling, and the 4-State Adversarial Target Bot driven by ML-Agents Curriculum Parameters.
 /// Handles Goal-Conditioning random sampling and mid-episode goal shifts.
 /// </summary>
@@ -12,8 +12,8 @@ public class GCRLArenaEnvironment : MonoBehaviour
     public GCRLDroneAgent droneAgent;
     public Rigidbody targetRb;
     public Transform ceilingTransform;
-    public Transform[] pillarPool;       // 8 Vertical Cylinders/Boxes
-    public Transform[] floatingBeamPool; // 4 Horizontal Overhangs
+    public Transform[] pillarPool;       // 20 Vertical Cylinders/Boxes
+    public Transform[] floatingBeamPool; // 8 Horizontal Overhangs
 
     [Header("Arena Bounds (Local)")]
     public float arenaHalfExtentXZ = 18.0f;
@@ -22,11 +22,19 @@ public class GCRLArenaEnvironment : MonoBehaviour
     // Curriculum Parameters fetched from ML-Agents YAML
     private EnvironmentParameters _envParams;
     private float _targetSpeedMult = 1.0f;
-    private int _activePillars = 6;
-    private int _activeBeams = 2;
+    private int _activePillars = 20;
+    private int _activeBeams = 8;
     private bool _enableKnockback = false;
+    private bool _enableGoalResample = false;
     private float _targetGoalY = 1.0f;
     private float _currentCeilingY = 9.0f;
+
+    // Cached references and curriculum bounds
+    private Rigidbody _droneRb;
+    private float _goalDistMin = 2.0f;
+    private float _goalDistMax = 12.0f;
+    private float _goalHeightMin = 0.5f;
+    private float _goalHeightMax = 6.0f;
 
     // GCRL Goal Resampling State
     private float _currentGoalDist = 3.0f;
@@ -49,6 +57,21 @@ public class GCRLArenaEnvironment : MonoBehaviour
             targetRb.interpolation = RigidbodyInterpolation.Interpolate;
             targetRb.constraints = RigidbodyConstraints.FreezeRotation;
         }
+        if (droneAgent != null)
+        {
+            _droneRb = droneAgent.GetComponent<Rigidbody>();
+        }
+    }
+
+    private float GetMaxTargetY()
+    {
+        return Mathf.Max(1.5f, _currentCeilingY - _currentGoalHeight - 1.5f);
+    }
+
+    private static Vector2 SampleUnitCircle2D()
+    {
+        float angle = Random.Range(0f, Mathf.PI * 2f);
+        return new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
     }
 
     /// <summary>
@@ -60,13 +83,18 @@ public class GCRLArenaEnvironment : MonoBehaviour
         {
             _envParams = Academy.Instance.EnvironmentParameters;
         }
+        if (_droneRb == null && droneAgent != null)
+        {
+            _droneRb = droneAgent.GetComponent<Rigidbody>();
+        }
 
         // 1. Read Curriculum Parameters (with sensible defaults for Editor testing)
-        _targetSpeedMult = _envParams.GetWithDefault("target_speed_mult", 1.0f);
-        _activePillars   = Mathf.RoundToInt(_envParams.GetWithDefault("obstacle_pillars", 6f));
-        _activeBeams     = Mathf.RoundToInt(_envParams.GetWithDefault("obstacle_beams", 2f));
-        float minCeiling = _envParams.GetWithDefault("min_ceiling_height", 6.0f);
-        _enableKnockback = _envParams.GetWithDefault("enable_knockback", 0f) > 0.5f;
+        _targetSpeedMult    = _envParams.GetWithDefault("target_speed_mult", 1.0f);
+        _activePillars      = Mathf.RoundToInt(_envParams.GetWithDefault("obstacle_pillars", 20f));
+        _activeBeams        = Mathf.RoundToInt(_envParams.GetWithDefault("obstacle_beams", 8f));
+        float minCeiling    = _envParams.GetWithDefault("min_ceiling_height", 6.0f);
+        _enableKnockback    = _envParams.GetWithDefault("enable_knockback", 0f) > 0.5f;
+        _enableGoalResample = _envParams.GetWithDefault("enable_goal_resample", 0f) > 0.5f;
 
         // 2. Randomize Ceiling Height (Expanded to 16m for high-elevation perches)
         float ceilingY = Random.Range(minCeiling, 16.0f);
@@ -77,13 +105,13 @@ public class GCRLArenaEnvironment : MonoBehaviour
         }
 
         // 3. Goal-Conditioning Sampling from Curriculum
-        float goalDistMin   = _envParams.GetWithDefault("goal_dist_min", 2.0f);
-        float goalDistMax   = _envParams.GetWithDefault("goal_dist_max", 12.0f);
-        float goalHeightMin = _envParams.GetWithDefault("goal_height_min", 0.5f);
-        float goalHeightMax = _envParams.GetWithDefault("goal_height_max", 6.0f);
+        _goalDistMin   = _envParams.GetWithDefault("goal_dist_min", 2.0f);
+        _goalDistMax   = _envParams.GetWithDefault("goal_dist_max", 12.0f);
+        _goalHeightMin = _envParams.GetWithDefault("goal_height_min", 0.5f);
+        _goalHeightMax = _envParams.GetWithDefault("goal_height_max", 6.0f);
 
-        _currentGoalDist = Random.Range(goalDistMin, goalDistMax);
-        _currentGoalHeight = Random.Range(goalHeightMin, goalHeightMax);
+        _currentGoalDist = Random.Range(_goalDistMin, _goalDistMax);
+        _currentGoalHeight = Random.Range(_goalHeightMin, _goalHeightMax);
 
         // Clamp goalHeight so target + standoff perch does not push drone into ceiling
         _currentGoalHeight = Mathf.Min(_currentGoalHeight, _currentCeilingY - 2.0f);
@@ -105,7 +133,7 @@ public class GCRLArenaEnvironment : MonoBehaviour
 
         // 4. Spawn Target in a clear location with true 3D elevation
         // Headroom accounts for variable goalHeight so the drone has room to perch above
-        float maxTargetSpawnY = Mathf.Max(1.5f, ceilingY - _currentGoalHeight - 1.2f);
+        float maxTargetSpawnY = GetMaxTargetY();
         Vector3 targetLocalPos = new Vector3(
             Random.Range(-arenaHalfExtentXZ * 0.6f, arenaHalfExtentXZ * 0.6f),
             Random.Range(1.0f, maxTargetSpawnY),
@@ -120,12 +148,14 @@ public class GCRLArenaEnvironment : MonoBehaviour
         }
         _targetGoalY = targetLocalPos.y;
 
-        // 5. Spawn Drone 2m to 9m away at random elevation and yaw
-        Vector2 randCircle = Random.insideUnitCircle.normalized * Random.Range(2.0f, 9.0f);
+        // 5. Spawn Drone 2m to 9m away at random elevation and yaw, safely inside wall bounds
+        float safeSpawnBoundXZ = Mathf.Max(1.0f, arenaHalfExtentXZ - 1.5f);
+        float maxDroneSpawnY = Mathf.Max(1.2f, ceilingY - 1.2f);
+        Vector2 randCircle = SampleUnitCircle2D() * Random.Range(2.0f, 9.0f);
         Vector3 droneLocalPos = new Vector3(
-            Mathf.Clamp(targetLocalPos.x + randCircle.x, -arenaHalfExtentXZ, arenaHalfExtentXZ),
-            Random.Range(1.2f, ceilingY - 1.2f),
-            Mathf.Clamp(targetLocalPos.z + randCircle.y, -arenaHalfExtentXZ, arenaHalfExtentXZ)
+            Mathf.Clamp(targetLocalPos.x + randCircle.x, -safeSpawnBoundXZ, safeSpawnBoundXZ),
+            Random.Range(1.2f, maxDroneSpawnY),
+            Mathf.Clamp(targetLocalPos.z + randCircle.y, -safeSpawnBoundXZ, safeSpawnBoundXZ)
         );
 
         if (droneAgent != null)
@@ -134,7 +164,7 @@ public class GCRLArenaEnvironment : MonoBehaviour
             droneAgent.transform.localRotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
         }
 
-        // 6. Randomize Pre-Allocated Obstacles (Ensuring 2.5m Clearance from Spawns)
+        // 6. Randomize Pre-Allocated Obstacles (With Spawn & Wall Margin Clearance)
         if (pillarPool != null && pillarPool.Length > 0)
         {
             RandomizeObstacles(pillarPool, _activePillars, targetLocalPos, droneLocalPos, false, ceilingY);
@@ -146,6 +176,9 @@ public class GCRLArenaEnvironment : MonoBehaviour
         }
 
         PickNextBotState();
+
+        // Sync physics transforms so step-0 raycasts and linecasts see newly placed objects
+        Physics.SyncTransforms();
     }
 
     /// <summary>
@@ -154,6 +187,12 @@ public class GCRLArenaEnvironment : MonoBehaviour
     /// </summary>
     private void RandomizeObstacles(Transform[] pool, int activeCount, Vector3 targetPos, Vector3 dronePos, bool isFloatingBeam, float ceilingY)
     {
+        float marginXZ = isFloatingBeam ? 3.5f : 1.5f;
+        float boundXZ = Mathf.Max(1.0f, arenaHalfExtentXZ - marginXZ);
+        float minClearance = isFloatingBeam ? 5.0f : 3.0f;
+        float minClearanceSqr = minClearance * minClearance;
+        float maxBeamY = Mathf.Max(2.5f, ceilingY - 1.0f);
+
         for (int i = 0; i < pool.Length; i++)
         {
             if (pool[i] == null) continue;
@@ -164,22 +203,34 @@ public class GCRLArenaEnvironment : MonoBehaviour
                 continue;
             }
 
-            pool[i].gameObject.SetActive(true);
             Vector3 candidatePos = Vector3.zero;
+            bool placed = false;
 
-            // Try up to 10 times to find a spot outside 2.5m spawn clearance zones
-            for (int attempt = 0; attempt < 10; attempt++)
+            // Try up to 20 times to find a spot outside spawn clearance zones
+            for (int attempt = 0; attempt < 20; attempt++)
             {
-                float x = Random.Range(-arenaHalfExtentXZ, arenaHalfExtentXZ);
-                float z = Random.Range(-arenaHalfExtentXZ, arenaHalfExtentXZ);
-                float y = isFloatingBeam ? Random.Range(2.5f, ceilingY - 1.0f) : (ceilingY * 0.5f);
+                float x = Random.Range(-boundXZ, boundXZ);
+                float z = Random.Range(-boundXZ, boundXZ);
+                float y = isFloatingBeam ? Random.Range(2.5f, maxBeamY) : (ceilingY * 0.5f);
                 candidatePos = new Vector3(x, y, z);
 
-                if (Vector2.Distance(new Vector2(x, z), new Vector2(targetPos.x, targetPos.z)) > 2.5f &&
-                    Vector2.Distance(new Vector2(x, z), new Vector2(dronePos.x, dronePos.z)) > 2.5f)
+                float dTargetX = x - targetPos.x;
+                float dTargetZ = z - targetPos.z;
+                float dDroneX = x - dronePos.x;
+                float dDroneZ = z - dronePos.z;
+
+                if ((dTargetX * dTargetX + dTargetZ * dTargetZ) >= minClearanceSqr &&
+                    (dDroneX * dDroneX + dDroneZ * dDroneZ) >= minClearanceSqr)
                 {
+                    placed = true;
                     break;
                 }
+            }
+
+            if (!placed)
+            {
+                pool[i].gameObject.SetActive(false);
+                continue;
             }
 
             pool[i].localPosition = candidatePos;
@@ -194,6 +245,8 @@ public class GCRLArenaEnvironment : MonoBehaviour
                 float width = Random.Range(0.6f, 1.6f);
                 pool[i].localScale = new Vector3(width, ceilingY, width);
             }
+
+            pool[i].gameObject.SetActive(true);
         }
     }
 
@@ -202,8 +255,7 @@ public class GCRLArenaEnvironment : MonoBehaviour
         UpdateTargetBot();
 
         // Stage 2+ GCRL: Mid-Episode Goal Resampling (Step-Response Training)
-        float enableResample = _envParams != null ? _envParams.GetWithDefault("enable_goal_resample", 0f) : 0f;
-        if (enableResample > 0.5f && droneAgent != null && !droneAgent.manualDebugControl)
+        if (_enableGoalResample && droneAgent != null && !droneAgent.manualDebugControl)
         {
             _resampleTimer -= Time.fixedDeltaTime;
             if (_resampleTimer <= 0f)
@@ -211,39 +263,31 @@ public class GCRLArenaEnvironment : MonoBehaviour
                 _resampleTimer = Random.Range(5.0f, 10.0f);
                 if (Random.value < _resampleChance)
                 {
-                    float goalDistMin   = _envParams.GetWithDefault("goal_dist_min", 2.0f);
-                    float goalDistMax   = _envParams.GetWithDefault("goal_dist_max", 12.0f);
-                    float goalHeightMin = _envParams.GetWithDefault("goal_height_min", 0.5f);
-                    float goalHeightMax = _envParams.GetWithDefault("goal_height_max", 6.0f);
-
                     // Smooth transition: shift by at most 40% of the total range per shift
-                    float maxDistShift   = (goalDistMax - goalDistMin) * 0.4f;
-                    float maxHeightShift = (goalHeightMax - goalHeightMin) * 0.4f;
+                    float maxDistShift   = (_goalDistMax - _goalDistMin) * 0.4f;
+                    float maxHeightShift = (_goalHeightMax - _goalHeightMin) * 0.4f;
 
                     _currentGoalDist = Mathf.Clamp(
                         _currentGoalDist + Random.Range(-maxDistShift, maxDistShift),
-                        goalDistMin, goalDistMax
+                        _goalDistMin, _goalDistMax
                     );
                     _currentGoalHeight = Mathf.Clamp(
                         _currentGoalHeight + Random.Range(-maxHeightShift, maxHeightShift),
-                        goalHeightMin,
-                        Mathf.Min(goalHeightMax, _currentCeilingY - 2.0f)
+                        _goalHeightMin,
+                        Mathf.Min(_goalHeightMax, _currentCeilingY - 2.0f)
                     );
 
                     droneAgent.goalDist   = _currentGoalDist;
                     droneAgent.goalHeight = _currentGoalHeight;
+                    _targetGoalY = Mathf.Min(_targetGoalY, GetMaxTargetY());
                 }
             }
         }
 
         // Stage 3 Domain Randomization: Occasional Velocity Impulse (Weapon Knockback / Wind)
-        if (_enableKnockback && droneAgent != null && Random.value < 0.008f)
+        if (_enableKnockback && _droneRb != null && Random.value < 0.002f)
         {
-            Rigidbody droneRb = droneAgent.GetComponent<Rigidbody>();
-            if (droneRb != null)
-            {
-                droneRb.AddForce(Random.onUnitSphere * Random.Range(3f, 7f), ForceMode.VelocityChange);
-            }
+            _droneRb.AddForce(Random.onUnitSphere * Random.Range(1.5f, 3.5f), ForceMode.VelocityChange);
         }
     }
 
@@ -266,11 +310,10 @@ public class GCRLArenaEnvironment : MonoBehaviour
         else if (roll < 0.85f) _currentState = BotState.Serpentine;  // 30% Evasive weaving
         else _currentState = BotState.PillarHug;                      // 15% Orbit around obstacles
 
-        Vector2 randDir = Random.insideUnitCircle.normalized;
+        Vector2 randDir = SampleUnitCircle2D();
         _moveDir = new Vector3(randDir.x, 0f, randDir.y);
 
-        float maxBotY = Mathf.Max(1.5f, _currentCeilingY - 3.2f);
-        _targetGoalY = Random.Range(1.0f, maxBotY);
+        _targetGoalY = Random.Range(1.0f, GetMaxTargetY());
     }
 
     /// <summary>
@@ -328,7 +371,7 @@ public class GCRLArenaEnvironment : MonoBehaviour
         if (Mathf.Abs(localPos.x) > arenaHalfExtentXZ - 1.0f) _moveDir.x = -Mathf.Sign(localPos.x);
         if (Mathf.Abs(localPos.z) > arenaHalfExtentXZ - 1.0f) _moveDir.z = -Mathf.Sign(localPos.z);
         if (localPos.y < 1.0f && desiredVel.y < 0f) desiredVel.y = -desiredVel.y;
-        if (localPos.y > _currentCeilingY - 3.0f && desiredVel.y > 0f) desiredVel.y = -desiredVel.y;
+        if (localPos.y > GetMaxTargetY() && desiredVel.y > 0f) desiredVel.y = -desiredVel.y;
 
         targetRb.linearVelocity = Vector3.Lerp(targetRb.linearVelocity, desiredVel, Time.fixedDeltaTime * 8f);
     }
