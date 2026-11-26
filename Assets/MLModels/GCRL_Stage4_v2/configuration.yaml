@@ -1,0 +1,556 @@
+default_settings: null
+behaviors:
+  KillerDrone:
+    trainer_type: ppo
+    hyperparameters:
+      batch_size: 2048
+      buffer_size: 20480
+      learning_rate: 0.0003
+      beta: 0.005
+      epsilon: 0.2
+      lambd: 0.95
+      num_epoch: 3
+      shared_critic: false
+      learning_rate_schedule: linear
+      beta_schedule: linear
+      epsilon_schedule: linear
+    network_settings:
+      normalize: true
+      hidden_units: 256
+      num_layers: 3
+      vis_encode_type: simple
+      memory: null
+      goal_conditioning_type: hyper
+      deterministic: false
+    reward_signals:
+      extrinsic:
+        gamma: 0.995
+        strength: 1.0
+        network_settings:
+          normalize: false
+          hidden_units: 128
+          num_layers: 2
+          vis_encode_type: simple
+          memory: null
+          goal_conditioning_type: hyper
+          deterministic: false
+    init_path: null
+    keep_checkpoints: 10
+    checkpoint_interval: 500000
+    max_steps: 10000000
+    time_horizon: 128
+    summary_freq: 10000
+    threaded: true
+    self_play: null
+    behavioral_cloning: null
+env_settings:
+  env_path: null
+  env_args: null
+  base_port: 5005
+  num_envs: 1
+  num_areas: 1
+  seed: -1
+  max_lifetime_restarts: 10
+  restarts_rate_limit_n: 1
+  restarts_rate_limit_period_s: 60
+engine_settings:
+  width: 84
+  height: 84
+  quality_level: 1
+  time_scale: 20.0
+  target_frame_rate: -1
+  capture_frame_rate: 60
+  no_graphics: false
+environment_parameters:
+  goal_dist_min:
+    curriculum:
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4346
+          value: 2.5
+      name: Stage1_Warmup
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.3
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4347
+          value: 2.0
+      name: Stage2_DynamicTracking
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.5
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4348
+          value: 2.0
+      name: Stage3_DenseClutter
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.6
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4349
+          value: 2.0
+      name: Stage4_AdversarialCombat
+      completion_criteria: null
+  goal_dist_max:
+    curriculum:
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4350
+          value: 6.0
+      name: Stage1_Warmup
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.3
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4351
+          value: 10.0
+      name: Stage2_DynamicTracking
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.5
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4352
+          value: 12.0
+      name: Stage3_DenseClutter
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.6
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4353
+          value: 12.0
+      name: Stage4_AdversarialCombat
+      completion_criteria: null
+  goal_height_min:
+    curriculum:
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4354
+          value: 1.0
+      name: Stage1_Warmup
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.3
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4355
+          value: 0.5
+      name: Stage2_DynamicTracking
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.5
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4356
+          value: 0.5
+      name: Stage3_DenseClutter
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.6
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4357
+          value: 0.5
+      name: Stage4_AdversarialCombat
+      completion_criteria: null
+  goal_height_max:
+    curriculum:
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4358
+          value: 3.0
+      name: Stage1_Warmup
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.3
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4359
+          value: 5.0
+      name: Stage2_DynamicTracking
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.5
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4360
+          value: 6.0
+      name: Stage3_DenseClutter
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.6
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4361
+          value: 6.0
+      name: Stage4_AdversarialCombat
+      completion_criteria: null
+  enable_goal_resample:
+    curriculum:
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4362
+          value: 0.0
+      name: Stage1_Warmup
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.3
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4363
+          value: 1.0
+      name: Stage2_DynamicTracking
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.5
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4364
+          value: 1.0
+      name: Stage3_DenseClutter
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.6
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4365
+          value: 1.0
+      name: Stage4_AdversarialCombat
+      completion_criteria: null
+  target_speed_mult:
+    curriculum:
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4366
+          value: 0.3
+      name: Stage1_Warmup
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.3
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4367
+          value: 0.7
+      name: Stage2_DynamicTracking
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.5
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4368
+          value: 1.0
+      name: Stage3_DenseClutter
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.6
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4369
+          value: 1.0
+      name: Stage4_AdversarialCombat
+      completion_criteria: null
+  obstacle_pillars:
+    curriculum:
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4370
+          value: 4.0
+      name: Stage1_Warmup
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.3
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4371
+          value: 8.0
+      name: Stage2_DynamicTracking
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.5
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4372
+          value: 15.0
+      name: Stage3_DenseClutter
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.6
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4373
+          value: 20.0
+      name: Stage4_AdversarialCombat
+      completion_criteria: null
+  obstacle_beams:
+    curriculum:
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4374
+          value: 1.0
+      name: Stage1_Warmup
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.3
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4375
+          value: 3.0
+      name: Stage2_DynamicTracking
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.5
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4376
+          value: 6.0
+      name: Stage3_DenseClutter
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.6
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4377
+          value: 8.0
+      name: Stage4_AdversarialCombat
+      completion_criteria: null
+  min_ceiling_height:
+    curriculum:
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4378
+          value: 12.0
+      name: Stage1_Warmup
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.3
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4379
+          value: 12.0
+      name: Stage2_DynamicTracking
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.5
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4380
+          value: 10.0
+      name: Stage3_DenseClutter
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.6
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4381
+          value: 10.0
+      name: Stage4_AdversarialCombat
+      completion_criteria: null
+  enable_knockback:
+    curriculum:
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4382
+          value: 0.0
+      name: Stage1_Warmup
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.3
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4383
+          value: 0.0
+      name: Stage2_DynamicTracking
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.5
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4384
+          value: 0.0
+      name: Stage3_DenseClutter
+      completion_criteria:
+        behavior: KillerDrone
+        measure: reward
+        min_lesson_length: 200
+        signal_smoothing: true
+        threshold: 0.6
+        require_reset: true
+    - value:
+        sampler_type: constant
+        sampler_parameters:
+          seed: 4385
+          value: 1.0
+      name: Stage4_AdversarialCombat
+      completion_criteria: null
+checkpoint_settings:
+  run_id: GCRL_Stage4_v2
+  initialize_from: null
+  load_model: false
+  resume: false
+  force: true
+  train_model: false
+  inference: false
+  results_dir: C:\Users\USER\Unity_Games\Ai_brain_test\Assets\MLModels
+torch_settings:
+  device: cuda
+debug: false
